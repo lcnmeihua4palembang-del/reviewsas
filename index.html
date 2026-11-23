@@ -1,0 +1,1974 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Latihan Membaca Hanzi Kelas 4 SD - FZKai</title>
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Google Fonts: Nunito untuk UI anak-anak & LXGW WenKai sebagai fallback universal untuk FZKai (方正楷体) -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=LXGW+WenKai:wght@400;700&family=Nunito:wght@600;700;800;900&display=swap" rel="stylesheet" />
+
+  <style>
+    /* Pengaturan Font Utama UI */
+    body {
+      font-family: 'Nunito', sans-serif;
+      background-color: #FFFBEB; /* Kuning lembut ramah mata anak */
+      background-image: radial-gradient(#FDE68A 1.5px, transparent 1.5px);
+      background-size: 24px 24px;
+    }
+
+    /* Prioritas Font FZKai (Founder Kaiti / KaiTi) untuk semua karakter Hanzi */
+    .font-fzkai {
+      font-family: 'FZKai-Z03', 'FZKTJW', 'KaiTi', 'STKaiti', 'Kaiti SC', 'LXGW WenKai', serif;
+      letter-spacing: 0.04em;
+    }
+
+    /* Animasi Transisi Soal */
+    @keyframes popIn {
+      0% {
+        opacity: 0;
+        transform: translateY(10px) scale(0.98);
+      }
+      100% {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+      }
+    }
+
+    .animate-pop {
+      animation: popIn 0.28s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    }
+
+    /* Custom Scrollbar lembut untuk menu soal kiri */
+    .custom-scroll::-webkit-scrollbar {
+      width: 6px;
+    }
+    .custom-scroll::-webkit-scrollbar-track {
+      background: #FEF3C7;
+      border-radius: 9999px;
+    }
+    .custom-scroll::-webkit-scrollbar-thumb {
+      background: #F59E0B;
+      border-radius: 9999px;
+    }
+  </style>
+</head>
+<body class="min-h-screen flex flex-col text-slate-800 selection:bg-amber-200">
+
+  <!-- ==================== HEADER ==================== -->
+  <header class="sticky top-0 z-30 bg-gradient-to-r from-amber-500 via-orange-500 to-rose-500 text-white shadow-lg border-b-4 border-amber-600">
+    <div class="max-w-7xl mx-auto px-3 sm:px-6 py-3 flex items-center justify-between gap-2">
+      <!-- Kiri: Tombol Menu Mobile & Judul -->
+      <div class="flex items-center gap-2 sm:gap-3">
+        <button
+          id="mobileMenuBtn"
+          onclick="toggleMobileMenu()"
+          class="md:hidden p-2.5 rounded-xl bg-white/20 hover:bg-white/30 active:scale-95 transition flex items-center justify-center"
+          aria-label="Buka Daftar Soal"
+        >
+          <svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M4 6h16M4 12h16M4 18h16" />
+          </svg>
+        </button>
+
+        <div class="bg-white text-orange-600 w-10 h-10 sm:w-12 sm:h-12 rounded-2xl flex items-center justify-center font-fzkai text-2xl sm:text-3xl font-bold shadow-md border-2 border-amber-200 shrink-0">
+          汉
+        </div>
+
+        <div>
+          <h1 class="text-base sm:text-xl font-black tracking-tight leading-tight">
+            Latihan Membaca Hanzi <span class="hidden sm:inline">• Kelas 4 SD</span>
+          </h1>
+          <p class="text-xs sm:text-sm text-amber-100 font-semibold">
+            开心学汉字 • lcnpalembang-08994477998
+          </p>
+        </div>
+      </div>
+
+      <!-- Kanan: Progres & Tombol Review -->
+      <div class="flex items-center gap-2 sm:gap-3">
+        <div class="hidden sm:flex flex-col items-end bg-black/15 px-3.5 py-1.5 rounded-2xl border border-white/20">
+          <span class="text-xs font-bold text-amber-100">Terjawab</span>
+          <span id="headerProgressText" class="text-sm font-black">0 / 40 Soal</span>
+        </div>
+
+        <button
+          onclick="openReviewView()"
+          class="px-3 sm:px-4 py-2.5 rounded-2xl bg-emerald-500 hover:bg-emerald-600 active:scale-95 text-white font-extrabold text-xs sm:text-sm shadow-md border-b-4 border-emerald-700 transition flex items-center gap-1.5 cursor-pointer"
+        >
+          <span>📋</span>
+          <span>Review & Koreksi</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- Progress Bar Tipis -->
+    <div class="w-full h-2 bg-amber-900/30">
+      <div id="topProgressBar" class="h-full bg-emerald-300 transition-all duration-300" style="width: 0%"></div>
+    </div>
+  </header>
+
+  <!-- ==================== MAIN CONTENT (SIDEBAR KIRI + 1 LAYAR 1 SOAL) ==================== -->
+  <div class="flex-1 max-w-7xl w-full mx-auto flex flex-col md:flex-row gap-4 p-3 sm:p-5">
+
+    <!-- Backdrop Mobile untuk Sidebar -->
+    <div
+      id="sidebarBackdrop"
+      onclick="toggleMobileMenu()"
+      class="fixed inset-0 bg-slate-900/50 z-30 hidden md:hidden backdrop-blur-xs"
+    ></div>
+
+    <!-- MENU SOAL BAGIAN KIRI -->
+    <aside
+      id="leftSidebar"
+      class="fixed md:static inset-y-0 left-0 z-40 w-72 sm:w-80 md:w-72 lg:w-80 bg-white rounded-none md:rounded-3xl shadow-xl border-r-4 md:border-4 border-amber-200 flex flex-col transform -translate-x-full md:translate-x-0 transition-transform duration-200 ease-out shrink-0 md:max-h-[calc(100vh-140px)] md:sticky md:top-24"
+    >
+      <!-- Header Sidebar -->
+      <div class="p-4 bg-gradient-to-r from-amber-100 to-orange-100 rounded-t-none md:rounded-t-[20px] border-b-2 border-amber-200 flex items-center justify-between">
+        <div>
+          <h2 class="font-black text-amber-900 text-base flex items-center gap-1.5">
+            <span>🧭</span> Daftar Nomor Soal
+          </h2>
+          <p class="text-xs text-amber-700 font-bold">Klik nomor untuk pindah soal</p>
+        </div>
+        <button
+          onclick="toggleMobileMenu()"
+          class="md:hidden p-2 rounded-xl bg-amber-200 text-amber-900 font-bold"
+        >
+          ✕
+        </button>
+      </div>
+
+      <!-- Legenda Warna -->
+      <div class="px-4 py-2.5 bg-amber-50/70 border-b border-amber-100 flex flex-wrap gap-2 text-[11px] font-bold text-slate-600">
+        <span class="flex items-center gap-1"><span class="w-3 h-3 rounded-full bg-orange-500 inline-block"></span> Aktif</span>
+        <span class="flex items-center gap-1"><span class="w-3 h-3 rounded-full bg-sky-500 inline-block"></span> Terjawab</span>
+        <span class="flex items-center gap-1"><span class="w-3 h-3 rounded-full bg-slate-200 border border-slate-300 inline-block"></span> Belum</span>
+      </div>
+
+      <!-- Daftar Nomor Soal Dikelompokkan per Bagian -->
+      <div id="questionMenuContainer" class="p-4 overflow-y-auto custom-scroll flex-1 space-y-4">
+        <!-- Diisi otomatis via JavaScript -->
+      </div>
+
+      <!-- Tombol Review di Bawah Menu Kiri -->
+      <div class="p-3 bg-amber-50 border-t-2 border-amber-200 rounded-b-none md:rounded-b-[20px]">
+        <button
+          onclick="openReviewView()"
+          class="w-full py-3 px-4 rounded-2xl bg-gradient-to-r from-emerald-500 to-teal-500 hover:from-emerald-600 hover:to-teal-600 text-white font-black text-sm shadow-md border-b-4 border-emerald-700 active:translate-y-0.5 transition flex items-center justify-center gap-2 cursor-pointer"
+        >
+          <span>🏆</span>
+          <span>Selesai & Lihat Review</span>
+        </button>
+      </div>
+    </aside>
+
+    <!-- AREA UTAMA KANAN: 1 LAYAR 1 SOAL ATAU HALAMAN REVIEW -->
+    <main class="flex-1 min-w-0 flex flex-col">
+      <!-- Container Soal Tunggal (1 Layar 1 Soal) -->
+      <section id="singleQuestionStage" class="flex-1 flex flex-col">
+        <!-- Konten soal aktif akan dirender di sini -->
+      </section>
+
+      <!-- Container Halaman Review & Koreksi -->
+      <section id="reviewStage" class="hidden flex-1 flex-col">
+        <!-- Konten review seluruh 40 soal & jawaban benar dirender di sini -->
+      </section>
+    </main>
+  </div>
+
+  <!-- Toast / Pesan Pemberitahuan Ramah Anak (Pengganti alert) -->
+  <div
+    id="toastBox"
+    class="fixed bottom-16 right-4 z-50 transform translate-y-20 opacity-0 pointer-events-none transition-all duration-300 bg-slate-900 text-white px-4 py-3 rounded-2xl shadow-xl font-bold text-sm flex items-center gap-2 border-2 border-amber-400"
+  >
+    <span id="toastIcon">💡</span>
+    <span id="toastMsg">Pesan</span>
+  </div>
+
+  <!-- ==================== FOOTER WAJIB ==================== -->
+  <footer class="mt-auto bg-slate-900 text-amber-300 border-t-4 border-amber-500 py-3.5 px-4 text-center shadow-inner">
+    <p class="font-extrabold tracking-wide text-sm sm:text-base">
+      lcnpalembang-08994477998
+    </p>
+  </footer>
+
+  <!-- ==================== JAVASCRIPT LOGIKA & BANK SOAL ==================== -->
+  <script>
+    /**
+     * Kumpulan Ilustrasi SVG Lucu & Menarik untuk Anak Kelas 4 SD
+     * Setiap tema bacaan/soal memiliki ilustrasi ramah anak yang ceria.
+     */
+    const ILLUSTRATIONS = {
+      cake: `
+        <svg viewBox="0 0 220 150" class="w-36 h-24 sm:w-44 sm:h-32 mx-auto drop-shadow-sm">
+          <rect x="15" y="110" width="190" height="14" rx="7" fill="#D97706"/>
+          <rect x="35" y="124" width="14" height="22" rx="4" fill="#B45309"/>
+          <rect x="171" y="124" width="14" height="22" rx="4" fill="#B45309"/>
+          <!-- Piring -->
+          <ellipse cx="110" cy="108" rx="68" ry="10" fill="#E0F2FE" stroke="#7DD3FC" stroke-width="2"/>
+          <!-- Kue Tart -->
+          <rect x="62" y="64" width="96" height="42" rx="12" fill="#FDE68A" stroke="#F59E0B" stroke-width="3"/>
+          <path d="M62 76 Q78 90 94 76 Q110 90 126 76 Q142 90 158 76 L158 68 Q158 60 148 60 L72 60 Q62 60 62 68 Z" fill="#FB7185"/>
+          <!-- Wajah Lucu di Kue -->
+          <circle cx="95" cy="91" r="3.5" fill="#78350F"/>
+          <circle cx="125" cy="91" r="3.5" fill="#78350F"/>
+          <path d="M104 94 Q110 100 116 94" fill="none" stroke="#78350F" stroke-width="2.5" stroke-linecap="round"/>
+          <!-- Stroberi & Lilin -->
+          <circle cx="85" cy="54" r="7" fill="#E11D48"/>
+          <circle cx="135" cy="54" r="7" fill="#E11D48"/>
+          <rect x="107" y="34" width="6" height="24" rx="3" fill="#38BDF8"/>
+          <path d="M110 18 C104 26 106 33 110 33 C114 33 116 26 110 18 Z" fill="#FACC15"/>
+        </svg>
+      `,
+      books: `
+        <svg viewBox="0 0 220 150" class="w-36 h-24 sm:w-44 sm:h-32 mx-auto drop-shadow-sm">
+          <!-- Panda Lucu Membaca Buku -->
+          <circle cx="72" cy="40" r="14" fill="#1E293B"/>
+          <circle cx="148" cy="40" r="14" fill="#1E293B"/>
+          <circle cx="110" cy="64" r="38" fill="#FFFFFF" stroke="#1E293B" stroke-width="3"/>
+          <ellipse cx="94" cy="60" rx="9" ry="11" transform="rotate(-15 94 60)" fill="#1E293B"/>
+          <ellipse cx="126" cy="60" rx="9" ry="11" transform="rotate(15 126 60)" fill="#1E293B"/>
+          <circle cx="95" cy="58" r="3" fill="#FFFFFF"/>
+          <circle cx="125" cy="58" r="3" fill="#FFFFFF"/>
+          <ellipse cx="110" cy="70" rx="5" ry="3.5" fill="#1E293B"/>
+          <path d="M103 77 Q110 83 117 77" fill="none" stroke="#1E293B" stroke-width="2.5" stroke-linecap="round"/>
+          <!-- Buku Terbuka -->
+          <path d="M55 96 L110 106 L165 96 L165 134 L110 144 L55 134 Z" fill="#38BDF8" stroke="#0284C7" stroke-width="3"/>
+          <path d="M62 92 L110 102 L158 92 L158 128 L110 138 L62 128 Z" fill="#FFFBEB"/>
+          <line x1="110" y1="102" x2="110" y2="138" stroke="#CBD5E1" stroke-width="2"/>
+          <text x="74" y="118" font-size="14" fill="#F59E0B" font-weight="bold">书</text>
+          <text x="128" y="118" font-size="14" fill="#10B981" font-weight="bold">好</text>
+        </svg>
+      `,
+      clothes: `
+        <svg viewBox="0 0 220 150" class="w-36 h-24 sm:w-44 sm:h-32 mx-auto drop-shadow-sm">
+          <!-- Tempat Tidur & Rok Biru Lucu -->
+          <rect x="25" y="92" width="170" height="36" rx="10" fill="#FDBA74" stroke="#EA580C" stroke-width="3"/>
+          <rect x="25" y="65" width="16" height="72" rx="6" fill="#C2410C"/>
+          <rect x="179" y="80" width="16" height="57" rx="6" fill="#C2410C"/>
+          <rect x="44" y="78" width="42" height="16" rx="8" fill="#FFFFFF" stroke="#CBD5E1" stroke-width="2"/>
+          <!-- Rok Biru Lucu di Atas Kasur -->
+          <path d="M98 44 L126 44 L144 96 L80 96 Z" fill="#60A5FA" stroke="#2563EB" stroke-width="3" stroke-linejoin="round"/>
+          <rect x="96" y="38" width="32" height="10" rx="4" fill="#3B82F6"/>
+          <circle cx="112" cy="68" r="5" fill="#FDE047"/>
+          <circle cx="98" cy="82" r="4" fill="#FDE047"/>
+          <circle cx="126" cy="82" r="4" fill="#FDE047"/>
+          <!-- Bintang Kilau -->
+          <text x="155" y="55" font-size="20">✨</text>
+          <text x="55" y="52" font-size="18">👕</text>
+        </svg>
+      `,
+      transport: `
+        <svg viewBox="0 0 220 150" class="w-36 h-24 sm:w-44 sm:h-32 mx-auto drop-shadow-sm">
+          <!-- Awan & Pesawat Lucu -->
+          <circle cx="52" cy="36" r="14" fill="#E0F2FE"/>
+          <circle cx="68" cy="32" r="18" fill="#E0F2FE"/>
+          <circle cx="86" cy="36" r="14" fill="#E0F2FE"/>
+          <!-- Pesawat Kartun -->
+          <ellipse cx="145" cy="44" rx="34" ry="13" fill="#38BDF8" stroke="#0284C7" stroke-width="2.5"/>
+          <path d="M135 44 L120 24 L138 24 L152 44 Z" fill="#FACC15" stroke="#CA8A04" stroke-width="2"/>
+          <circle cx="162" cy="42" r="4" fill="#FFFFFF"/>
+          <!-- Sepeda Lucu di Jalan -->
+          <line x1="20" y1="132" x2="200" y2="132" stroke="#94A3B8" stroke-width="4" stroke-linecap="round"/>
+          <circle cx="72" cy="112" r="18" fill="none" stroke="#F43F5E" stroke-width="4"/>
+          <circle cx="138" cy="112" r="18" fill="none" stroke="#F43F5E" stroke-width="4"/>
+          <path d="M72 112 L98 92 L126 92 L138 112 M98 92 L105 112 L72 112" fill="none" stroke="#FB7185" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"/>
+          <circle cx="105" cy="112" r="5" fill="#FACC15"/>
+        </svg>
+      `,
+      stars: `
+        <svg viewBox="0 0 220 150" class="w-36 h-24 sm:w-44 sm:h-32 mx-auto drop-shadow-sm">
+          <!-- Dua Bintang Kembar Tersenyum (Untuk PG Kompleks 2 Jawaban) -->
+          <polygon points="72,22 84,52 116,55 92,76 99,108 72,91 45,108 52,76 28,55 60,52" fill="#FACC15" stroke="#EA580C" stroke-width="3" stroke-linejoin="round"/>
+          <circle cx="64" cy="64" r="3" fill="#78350F"/>
+          <circle cx="80" cy="64" r="3" fill="#78350F"/>
+          <path d="M67 72 Q72 77 77 72" fill="none" stroke="#78350F" stroke-width="2.5" stroke-linecap="round"/>
+
+          <polygon points="150,34 160,60 188,63 167,81 173,108 150,93 127,108 133,81 112,63 140,60" fill="#4ADE80" stroke="#15803D" stroke-width="3" stroke-linejoin="round"/>
+          <circle cx="143" cy="70" r="3" fill="#14532D"/>
+          <circle cx="157" cy="70" r="3" fill="#14532D"/>
+          <path d="M145 77 Q150 82 155 77" fill="none" stroke="#14532D" stroke-width="2.5" stroke-linecap="round"/>
+          <rect x="68" y="118" width="84" height="22" rx="11" fill="#FEF3C7" stroke="#F59E0B" stroke-width="2"/>
+          <text x="110" y="133" text-anchor="middle" font-size="11" font-weight="bold" fill="#B45309">Pilih 2 Jawaban!</text>
+        </svg>
+      `,
+      puzzle: `
+        <svg viewBox="0 0 220 150" class="w-36 h-24 sm:w-44 sm:h-32 mx-auto drop-shadow-sm">
+          <!-- Balok Kata Lucu -->
+          <rect x="36" y="42" width="64" height="64" rx="16" fill="#A78BFA" stroke="#6D28D9" stroke-width="3"/>
+          <rect x="120" y="42" width="64" height="64" rx="16" fill="#34D399" stroke="#047857" stroke-width="3"/>
+          <text x="68" y="83" text-anchor="middle" font-size="28" fill="#FFFFFF" font-weight="bold">词</text>
+          <text x="152" y="83" text-anchor="middle" font-size="28" fill="#FFFFFF" font-weight="bold">句</text>
+          <path d="M100 74 L120 74" stroke="#F59E0B" stroke-width="5" stroke-linecap="round" stroke-dasharray="4 4"/>
+          <circle cx="110" cy="26" r="12" fill="#FDE047"/>
+          <text x="110" y="31" text-anchor="middle" font-size="14">💡</text>
+        </svg>
+      `,
+      train: `
+        <svg viewBox="0 0 220 150" class="w-36 h-24 sm:w-44 sm:h-32 mx-auto drop-shadow-sm">
+          <!-- Kereta Susun Kalimat -->
+          <line x1="15" y1="126" x2="205" y2="126" stroke="#64748B" stroke-width="4" stroke-linecap="round"/>
+          <!-- Gerbong 1 -->
+          <rect x="28" y="64" width="68" height="44" rx="10" fill="#FB7185" stroke="#BE123C" stroke-width="3"/>
+          <circle cx="46" cy="114" r="10" fill="#1E293B"/>
+          <circle cx="80" cy="114" r="10" fill="#1E293B"/>
+          <text x="62" y="93" text-anchor="middle" font-size="20" fill="#FFFFFF" font-weight="bold">连词</text>
+          <!-- Penghubung -->
+          <line x1="96" y1="90" x2="114" y2="90" stroke="#F59E0B" stroke-width="5"/>
+          <!-- Kepala Kereta -->
+          <rect x="114" y="52" width="74" height="56" rx="12" fill="#38BDF8" stroke="#0369A1" stroke-width="3"/>
+          <rect x="126" y="34" width="16" height="18" rx="4" fill="#FACC15" stroke="#CA8A04" stroke-width="2"/>
+          <circle cx="132" cy="114" r="10" fill="#1E293B"/>
+          <circle cx="170" cy="114" r="10" fill="#1E293B"/>
+          <text x="151" y="88" text-anchor="middle" font-size="20" fill="#FFFFFF" font-weight="bold">成句</text>
+        </svg>
+      `
+    };
+
+    /**
+     * Teks Bacaan untuk Nomor 1-4, 5-7, dan 8-10
+     * Dibuat "serupa tapi tak sama" dengan PDF ujian agar anak terlatih membaca seluruh karakter Hanzi.
+     */
+    const READING_PASSAGES = {
+      text1: {
+        title: "Bacaan Cerita 1",
+        hanzi: "今天我的朋友小美来我家。妈妈买了四块蛋糕，她把蛋糕放在厨房里的椅子上。要吃蛋糕的时候，妈妈对我说：“椅子上的蛋糕少了一块。谁拿了椅子上的蛋糕呢？”",
+        pinyin: "Jīntiān wǒ de péngyou Xiǎoměi lái wǒ jiā. Māma mǎi le sì kuài dàngāo, tā bǎ dàngāo fàng zài chúfáng lǐ de yǐzi shàng. Yào chī dàngāo de shíhou, māma duì wǒ shuō: 'Yǐzi shàng de dàngāo shǎo le yī kuài. Shéi ná le yǐzi shàng de dàngāo ne?'",
+        meaning: "Hari ini temanku Xiaomei datang ke rumahku. Ibu membeli empat potong kue, dia meletakkan kue di atas kursi di dalam dapur. Saat hendak makan kue, ibu berkata kepadaku: 'Kue di atas kursi berkurang satu potong. Siapa yang mengambil kue di atas kursi ya?'",
+        illustration: "cake"
+      },
+      text2: {
+        title: "Bacaan Cerita 2",
+        hanzi: "我的同学大卫很喜欢看书。今天书店又有了新书。大卫说，他很想去买，因为这本书很好看。他说，他爸爸叫他约我一起来。其实，我也很想去，但是今天我和爸爸要去爷爷家。爷爷生病了，我们要去看他，所以我不能跟大卫一起去买书了。",
+        pinyin: "Wǒ de tóngxué Dàwèi hěn xǐhuan kànshū. Jīntiān shūdiàn yòu yǒu le xīn shū. Dàwèi shuō, tā hěn xiǎng qù mǎi, yīnwèi zhè běn shū hěn hǎokàn. Tā shuō, tā bàba jiào tā yuē wǒ yīqǐ lái. Qíshí, wǒ yě hěn xiǎng qù, dànshì jīntiān wǒ hé bàba yào qù yéye jiā. Yéye shēngbìng le, wǒmen yào qù kàn tā, suǒyǐ wǒ bù néng gēn Dàwèi yīqǐ qù mǎi shū le.",
+        meaning: "Teman sekelasku David sangat suka membaca buku. Hari ini toko buku ada buku baru lagi. David berkata dia sangat ingin pergi membelinya karena buku ini sangat bagus dibaca. Dia bilang ayahnya menyuruhnya mengajakku datang bersama. Sebenarnya aku juga sangat ingin pergi, tetapi hari ini aku dan ayah harus pergi ke rumah kakek. Kakek sedang sakit, kami harus pergi menjenguknya, jadi aku tidak bisa pergi membeli buku bersama David.",
+        illustration: "books"
+      },
+      text3: {
+        title: "Bacaan Cerita 3",
+        hanzi: "我家有爷爷、奶奶、爸爸、妈妈、哥哥、弟弟、妹妹和我。今天中午回家的时候，我看见床上有一件蓝色的新衣服。这件衣服不大也不小，是一件裙子。这是谁的衣服呢？",
+        pinyin: "Wǒ jiā yǒu yéye, nǎinai, bàba, māma, gēge, dìdi, mèimei hé wǒ. Jīntiān zhōngwǔ huíjiā de shíhou, wǒ kànjiàn chuáng shàng yǒu yī jiàn lán sè de xīn yīfu. Zhè jiàn yīfu bù dà yě bù xiǎo, shì yī jiàn qúnzi. Zhè shì shéi de yīfu ne?",
+        meaning: "Di keluargaku ada kakek, nenek, ayah, ibu, kakak laki-laki, adik laki-laki, adik perempuan, dan aku. Siang hari ini saat pulang ke rumah, aku melihat di atas tempat tidur ada sehelai baju baru berwarna biru. Baju ini tidak besar dan tidak kecil, yaitu sehelai rok. Baju siapakah ini?",
+        illustration: "clothes"
+      }
+    };
+
+    /**
+     * Bank 40 Soal Latihan Lengkap (Serupa Tapi Tak Sama dengan SAS Ganjil Kelas 4)
+     * Tipe Soal:
+     * - 'single': Pilihan Ganda Biasa (No. 1 - 20)
+     * - 'multi2': Pilihan Ganda Kompleks - Pilih 2 Jawaban (No. 21 - 25)
+     * - 'fill_word': Isian Memilih Kata dari Kotak (No. 26 - 30)
+     * - 'pinyin_hanzi': Memilih Hanzi Sesuai Pinyin (No. 31 - 35)
+     * - 'order': Uraian Menyusun Kata Menjadi Kalimat / 连词成句 (No. 36 - 40)
+     */
+    const BASE_QUESTIONS = [
+      // === BAGIAN I: PILIHAN GANDA (1 - 20) ===
+      {
+        id: 1,
+        section: "I. Pilihan Ganda",
+        type: "single",
+        passageKey: "text1",
+        illustration: "cake",
+        question: "小美是谁？",
+        qPinyin: "Xiǎoměi shì shéi?",
+        qMeaning: "Siapakah Xiaomei?",
+        options: [
+          { key: "a", text: "我的老师", pinyin: "wǒ de lǎoshī", meaning: "guruku" },
+          { key: "b", text: "我的朋友", pinyin: "wǒ de péngyou", meaning: "temanku" },
+          { key: "c", text: "我的妹妹", pinyin: "wǒ de mèimei", meaning: "adik perempuanku" },
+          { key: "d", text: "不知道", pinyin: "bù zhīdào", meaning: "tidak tahu" }
+        ],
+        correct: "b"
+      },
+      {
+        id: 2,
+        section: "I. Pilihan Ganda",
+        type: "single",
+        passageKey: "text1",
+        illustration: "cake",
+        question: "妈妈买了什么？",
+        qPinyin: "Māma mǎi le shénme?",
+        qMeaning: "Apa yang dibeli ibu?",
+        options: [
+          { key: "a", text: "香蕉", pinyin: "xiāngjiāo", meaning: "pisang" },
+          { key: "b", text: "苹果", pinyin: "píngguǒ", meaning: "apel" },
+          { key: "c", text: "蛋糕", pinyin: "dàngāo", meaning: "kue" },
+          { key: "d", text: "冰淇淋", pinyin: "bīngqílín", meaning: "es krim" }
+        ],
+        correct: "c"
+      },
+      {
+        id: 3,
+        section: "I. Pilihan Ganda",
+        type: "single",
+        passageKey: "text1",
+        illustration: "cake",
+        question: "妈妈把蛋糕放在哪儿？",
+        qPinyin: "Māma bǎ dàngāo fàng zài nǎr?",
+        qMeaning: "Di mana ibu meletakkan kue?",
+        options: [
+          { key: "a", text: "桌子上", pinyin: "zhuōzi shàng", meaning: "di atas meja" },
+          { key: "b", text: "床上", pinyin: "chuáng shàng", meaning: "di atas tempat tidur" },
+          { key: "c", text: "地上", pinyin: "dì shàng", meaning: "di atas lantai" },
+          { key: "d", text: "椅子上", pinyin: "yǐzi shàng", meaning: "di atas kursi" }
+        ],
+        correct: "d"
+      },
+      {
+        id: 4,
+        section: "I. Pilihan Ganda",
+        type: "single",
+        passageKey: "text1",
+        illustration: "cake",
+        question: "椅子上的蛋糕怎么了？",
+        qPinyin: "Yǐzi shàng de dàngāo zěnme le?",
+        qMeaning: "Ada apa dengan kue di atas kursi?",
+        options: [
+          { key: "a", text: "少了一块", pinyin: "shǎo le yī kuài", meaning: "berkurang satu potong" },
+          { key: "b", text: "吃完了", pinyin: "chī wán le", meaning: "sudah habis dimakan" },
+          { key: "c", text: "没有了", pinyin: "méiyǒu le", meaning: "sudah tidak ada" },
+          { key: "d", text: "有头发", pinyin: "yǒu tóufa", meaning: "ada rambut" }
+        ],
+        correct: "a"
+      },
+      {
+        id: 5,
+        section: "I. Pilihan Ganda",
+        type: "single",
+        passageKey: "text2",
+        illustration: "books",
+        question: "大卫很喜欢什么？",
+        qPinyin: "Dàwèi hěn xǐhuan shénme?",
+        qMeaning: "Apa yang sangat disukai David?",
+        options: [
+          { key: "a", text: "看电视", pinyin: "kàn diànshì", meaning: "menonton TV" },
+          { key: "b", text: "看电影", pinyin: "kàn diànyǐng", meaning: "menonton film" },
+          { key: "c", text: "看书", pinyin: "kàn shū", meaning: "membaca buku" },
+          { key: "d", text: "看手机", pinyin: "kàn shǒujī", meaning: "melihat ponsel" }
+        ],
+        correct: "c"
+      },
+      {
+        id: 6,
+        section: "I. Pilihan Ganda",
+        type: "single",
+        passageKey: "text2",
+        illustration: "books",
+        question: "那本新书怎么样？",
+        qPinyin: "Nà běn xīn shū zěnmeyàng?",
+        qMeaning: "Bagaimana buku baru itu?",
+        options: [
+          { key: "a", text: "很好看", pinyin: "hěn hǎokàn", meaning: "sangat bagus dibaca" },
+          { key: "b", text: "很多朋友", pinyin: "hěn duō péngyou", meaning: "banyak teman" },
+          { key: "c", text: "很多电影", pinyin: "hěn duō diànyǐng", meaning: "banyak film" },
+          { key: "d", text: "很多人", pinyin: "hěn duō rén", meaning: "banyak orang" }
+        ],
+        correct: "a"
+      },
+      {
+        id: 7,
+        section: "I. Pilihan Ganda",
+        type: "single",
+        passageKey: "text2",
+        illustration: "books",
+        question: "我为什么不能跟大卫一起去？",
+        qPinyin: "Wǒ wèishénme bù néng gēn Dàwèi yīqǐ qù?",
+        qMeaning: "Mengapa aku tidak bisa pergi bersama David?",
+        options: [
+          { key: "a", text: "下雨了", pinyin: "xiàyǔ le", meaning: "turun hujan" },
+          { key: "b", text: "爷爷生病了", pinyin: "yéye shēngbìng le", meaning: "kakek sakit" },
+          { key: "c", text: "不想去", pinyin: "bù xiǎng qù", meaning: "tidak ingin pergi" },
+          { key: "d", text: "不好看", pinyin: "bù hǎokàn", meaning: "tidak bagus" }
+        ],
+        correct: "b"
+      },
+      {
+        id: 8,
+        section: "I. Pilihan Ganda",
+        type: "single",
+        passageKey: "text3",
+        illustration: "clothes",
+        question: "上面没有谁？",
+        qPinyin: "Shàngmiàn méiyǒu shéi?",
+        qMeaning: "Siapa yang tidak disebutkan pada bacaan di atas?",
+        options: [
+          { key: "a", text: "哥哥", pinyin: "gēge", meaning: "kakak laki-laki" },
+          { key: "b", text: "弟弟", pinyin: "dìdi", meaning: "adik laki-laki" },
+          { key: "c", text: "姐姐", pinyin: "jiějie", meaning: "kakak perempuan" },
+          { key: "d", text: "妹妹", pinyin: "mèimei", meaning: "adik perempuan" }
+        ],
+        correct: "c"
+      },
+      {
+        id: 9,
+        section: "I. Pilihan Ganda",
+        type: "single",
+        passageKey: "text3",
+        illustration: "clothes",
+        question: "我回家的时候看见了什么？",
+        qPinyin: "Wǒ huíjiā de shíhou kànjiàn le shénme?",
+        qMeaning: "Apa yang aku lihat saat pulang ke rumah?",
+        options: [
+          { key: "a", text: "裙子", pinyin: "qúnzi", meaning: "rok" },
+          { key: "b", text: "裤子", pinyin: "kùzi", meaning: "celana" },
+          { key: "c", text: "帽子", pinyin: "màozi", meaning: "topi" },
+          { key: "d", text: "T恤", pinyin: "T-xù", meaning: "kaos T-shirt" }
+        ],
+        correct: "a"
+      },
+      {
+        id: 10,
+        section: "I. Pilihan Ganda",
+        type: "single",
+        passageKey: "text3",
+        illustration: "clothes",
+        question: "衣服在哪儿？",
+        qPinyin: "Yīfu zài nǎr?",
+        qMeaning: "Di mana baju itu berada?",
+        options: [
+          { key: "a", text: "椅子上", pinyin: "yǐzi shàng", meaning: "di atas kursi" },
+          { key: "b", text: "桌子上", pinyin: "zhuōzi shàng", meaning: "di atas meja" },
+          { key: "c", text: "厨房里", pinyin: "chúfáng lǐ", meaning: "di dalam dapur" },
+          { key: "d", text: "床上", pinyin: "chuáng shàng", meaning: "di atas tempat tidur" }
+        ],
+        correct: "d"
+      },
+      {
+        id: 11,
+        section: "I. Pilihan Ganda",
+        type: "single",
+        illustration: "puzzle",
+        question: "因为今天生病了，…… 我没有去学校。",
+        qPinyin: "Yīnwèi jīntiān shēngbìng le, ...... wǒ méiyǒu qù xuéxiào.",
+        qMeaning: "Karena hari ini sakit, ...... aku tidak pergi ke sekolah.",
+        options: [
+          { key: "a", text: "但是", pinyin: "dànshì", meaning: "tetapi" },
+          { key: "b", text: "所以", pinyin: "suǒyǐ", meaning: "oleh karena itu / jadi" },
+          { key: "c", text: "虽然", pinyin: "suīrán", meaning: "walaupun" },
+          { key: "d", text: "应该", pinyin: "yīnggāi", meaning: "seharusnya" }
+        ],
+        correct: "b"
+      },
+      {
+        id: 12,
+        section: "I. Pilihan Ganda",
+        type: "single",
+        illustration: "puzzle",
+        question: "爸爸回家的 …… 看见了一只小猫。",
+        qPinyin: "Bàba huíjiā de ...... kànjiàn le yī zhī xiǎo māo.",
+        qMeaning: "Pada ...... ayah pulang ke rumah, terlihat seekor kucing kecil.",
+        options: [
+          { key: "a", text: "时候", pinyin: "shíhou", meaning: "saat / waktu" },
+          { key: "b", text: "同学", pinyin: "tóngxué", meaning: "teman sekolah" },
+          { key: "c", text: "对", pinyin: "duì", meaning: "benar / kepada" },
+          { key: "d", text: "最", pinyin: "zuì", meaning: "paling" }
+        ],
+        correct: "a"
+      },
+      {
+        id: 13,
+        section: "I. Pilihan Ganda",
+        type: "single",
+        illustration: "books",
+        question: "妹妹会不会 ……？",
+        qPinyin: "Mèimei huì bù huì ......?",
+        qMeaning: "Apakah adik perempuan bisa ......?",
+        options: [
+          { key: "a", text: "去学校", pinyin: "qù xuéxiào", meaning: "pergi ke sekolah" },
+          { key: "b", text: "看电视", pinyin: "kàn diànshì", meaning: "menonton TV" },
+          { key: "c", text: "游泳", pinyin: "yóuyǒng", meaning: "berenang" },
+          { key: "d", text: "走路", pinyin: "zǒulù", meaning: "berjalan kaki" }
+        ],
+        correct: "c"
+      },
+      {
+        id: 14,
+        section: "I. Pilihan Ganda",
+        type: "single",
+        illustration: "puzzle",
+        question: "今天我们 …… 去爷爷家？",
+        qPinyin: "Jīntiān wǒmen ...... qù yéye jiā?",
+        qMeaning: "Hari ini apakah kita ...... pergi ke rumah kakek?",
+        options: [
+          { key: "a", text: "说不说", pinyin: "shuō bù shuō", meaning: "berbicara atau tidak" },
+          { key: "b", text: "能不能", pinyin: "néng bù néng", meaning: "bisakah / bolehkah" },
+          { key: "c", text: "走不走", pinyin: "zǒu bù zǒu", meaning: "berjalan atau tidak" },
+          { key: "d", text: "饿不饿", pinyin: "è bù è", meaning: "lapar atau tidak" }
+        ],
+        correct: "b"
+      },
+      {
+        id: 15,
+        section: "I. Pilihan Ganda",
+        type: "single",
+        illustration: "cake",
+        question: "这块蛋糕 …… 吃？",
+        qPinyin: "Zhè kuài dàngāo ...... chī?",
+        qMeaning: "Apakah potong kue ini ...... dimakan?",
+        options: [
+          { key: "a", text: "拿不拿", pinyin: "ná bù ná", meaning: "ambil atau tidak" },
+          { key: "b", text: "看不看", pinyin: "kàn bù kàn", meaning: "lihat atau tidak" },
+          { key: "c", text: "好不好", pinyin: "hǎo bù hǎo", meaning: "enak atau tidak" },
+          { key: "d", text: "饿不饿", pinyin: "è bù è", meaning: "lapar atau tidak" }
+        ],
+        correct: "c"
+      },
+      {
+        id: 16,
+        section: "I. Pilihan Ganda",
+        type: "single",
+        illustration: "books",
+        question: "明天有汉语考试，我 …… 在家看书。",
+        qPinyin: "Míngtiān yǒu Hànyǔ kǎoshì, wǒ ...... zài jiā kàn shū.",
+        qMeaning: "Besok ada ujian Bahasa Mandarin, aku ...... membaca buku di rumah.",
+        options: [
+          { key: "a", text: "应该", pinyin: "yīnggāi", meaning: "seharusnya" },
+          { key: "b", text: "累", pinyin: "lèi", meaning: "lelah" },
+          { key: "c", text: "快", pinyin: "kuài", meaning: "cepat" },
+          { key: "d", text: "最", pinyin: "zuì", meaning: "paling" }
+        ],
+        correct: "a"
+      },
+      {
+        id: 17,
+        section: "I. Pilihan Ganda",
+        type: "single",
+        illustration: "puzzle",
+        question: "你 …… 帮我把那个苹果给我吗？",
+        qPinyin: "Nǐ ...... bāng wǒ bǎ nàge píngguǒ gěi wǒ ma?",
+        qMeaning: "...... kamu membantuku memberikan apel itu kepadaku?",
+        options: [
+          { key: "a", text: "累", pinyin: "lèi", meaning: "lelah" },
+          { key: "b", text: "到", pinyin: "dào", meaning: "tiba / sampai" },
+          { key: "c", text: "可以", pinyin: "kěyǐ", meaning: "boleh / dapat" },
+          { key: "d", text: "最", pinyin: "zuì", meaning: "paling" }
+        ],
+        correct: "c"
+      },
+      {
+        id: 18,
+        section: "I. Pilihan Ganda",
+        type: "single",
+        illustration: "transport",
+        question: "哥哥，你骑车慢点儿，别太 ……！",
+        qPinyin: "Gēge, nǐ qíchē màn diǎnr, bié tài ......!",
+        qMeaning: "Kakak, naik sepedanya pelan sedikit, jangan terlalu ......!",
+        options: [
+          { key: "a", text: "走", pinyin: "zǒu", meaning: "berjalan" },
+          { key: "b", text: "累", pinyin: "lèi", meaning: "lelah" },
+          { key: "c", text: "所以", pinyin: "suǒyǐ", meaning: "jadi" },
+          { key: "d", text: "快", pinyin: "kuài", meaning: "cepat" }
+        ],
+        correct: "d"
+      },
+      {
+        id: 19,
+        section: "I. Pilihan Ganda",
+        type: "single",
+        illustration: "transport",
+        question: "坐飞机比坐火车 ……。",
+        qPinyin: "Zuò fēijī bǐ zuò huǒchē ......",
+        qMeaning: "Naik pesawat lebih ...... dibandingkan naik kereta api.",
+        options: [
+          { key: "a", text: "慢", pinyin: "màn", meaning: "lambat" },
+          { key: "b", text: "快", pinyin: "kuài", meaning: "cepat" },
+          { key: "c", text: "累", pinyin: "lèi", meaning: "lelah" },
+          { key: "d", text: "到", pinyin: "dào", meaning: "sampai" }
+        ],
+        correct: "b"
+      },
+      {
+        id: 20,
+        section: "I. Pilihan Ganda",
+        type: "single",
+        illustration: "transport",
+        question: "弟弟想骑 …… 去学校。",
+        qPinyin: "Dìdi xiǎng qí ...... qù xuéxiào.",
+        qMeaning: "Adik laki-laki ingin mengendarai ...... pergi ke sekolah.",
+        options: [
+          { key: "a", text: "飞机", pinyin: "fēijī", meaning: "pesawat" },
+          { key: "b", text: "火车", pinyin: "huǒchē", meaning: "kereta api" },
+          { key: "c", text: "自行车", pinyin: "zìxíngchē", meaning: "sepeda" },
+          { key: "d", text: "汽车", pinyin: "qìchē", meaning: "mobil" }
+        ],
+        correct: "c"
+      },
+
+      // === BAGIAN II: PILIHAN GANDA KOMPLEKS - PILIH 2 JAWABAN (21 - 25) ===
+      {
+        id: 21,
+        section: "II. PG Kompleks (2 Jawaban)",
+        type: "multi2",
+        illustration: "stars",
+        question: "我们可以 …… 去学校。(Pilih 2 jawaban tepat!)",
+        qPinyin: "Wǒmen kěyǐ ...... qù xuéxiào.",
+        qMeaning: "Kita bisa ...... pergi ke sekolah.",
+        options: [
+          { key: "a", text: "坐汽车", pinyin: "zuò qìchē", meaning: "naik mobil" },
+          { key: "b", text: "骑自行车", pinyin: "qí zìxíngchē", meaning: "naik sepeda" },
+          { key: "c", text: "看电影", pinyin: "kàn diànyǐng", meaning: "menonton film" },
+          { key: "d", text: "吃蛋糕", pinyin: "chī dàngāo", meaning: "makan kue" }
+        ],
+        correct: ["a", "b"]
+      },
+      {
+        id: 22,
+        section: "II. PG Kompleks (2 Jawaban)",
+        type: "multi2",
+        illustration: "stars",
+        question: "踢了足球以后，我觉得很 ……。(Pilih 2 jawaban tepat!)",
+        qPinyin: "Tī le zúqiú yǐhòu, wǒ juéde hěn ......",
+        qMeaning: "Setelah bermain sepak bola, aku merasa sangat ......",
+        options: [
+          { key: "a", text: "累", pinyin: "lèi", meaning: "lelah" },
+          { key: "b", text: "铅笔", pinyin: "qiānbǐ", meaning: "pensil" },
+          { key: "c", text: "饿", pinyin: "è", meaning: "lapar" },
+          { key: "d", text: "时候", pinyin: "shíhou", meaning: "waktu" }
+        ],
+        correct: ["a", "c"]
+      },
+      {
+        id: 23,
+        section: "II. PG Kompleks (2 Jawaban)",
+        type: "multi2",
+        illustration: "stars",
+        question: "姐姐在房间里 ……。(Pilih 2 jawaban tepat!)",
+        qPinyin: "Jiějie zài fángjiān lǐ ......",
+        qMeaning: "Kakak perempuan di dalam kamar ......",
+        options: [
+          { key: "a", text: "坐火车", pinyin: "zuò huǒchē", meaning: "naik kereta api" },
+          { key: "b", text: "看书", pinyin: "kàn shū", meaning: "membaca buku" },
+          { key: "c", text: "听音乐", pinyin: "tīng yīnyuè", meaning: "mendengarkan musik" },
+          { key: "d", text: "骑自行车", pinyin: "qí zìxíngchē", meaning: "naik sepeda" }
+        ],
+        correct: ["b", "c"]
+      },
+      {
+        id: 24,
+        section: "II. PG Kompleks (2 Jawaban)",
+        type: "multi2",
+        illustration: "stars",
+        question: "坐汽车比坐飞机 ……。(Pilih 2 jawaban tepat!)",
+        qPinyin: "Zuò qìchē bǐ zuò fēijī ......",
+        qMeaning: "Naik mobil lebih ...... dibandingkan naik pesawat.",
+        options: [
+          { key: "a", text: "慢", pinyin: "màn", meaning: "lambat" },
+          { key: "b", text: "便宜", pinyin: "piányi", meaning: "murah" },
+          { key: "c", text: "快", pinyin: "kuài", meaning: "cepat" },
+          { key: "d", text: "贵", pinyin: "guì", meaning: "mahal" }
+        ],
+        correct: ["a", "b"]
+      },
+      {
+        id: 25,
+        section: "II. PG Kompleks (2 Jawaban)",
+        type: "multi2",
+        illustration: "stars",
+        question: "你 …… 喝水？(Pilih 2 jawaban tepat!)",
+        qPinyin: "Nǐ ...... hē shuǐ?",
+        qMeaning: "Apakah kamu ...... minum air?",
+        options: [
+          { key: "a", text: "时候", pinyin: "shíhou", meaning: "saat / waktu" },
+          { key: "b", text: "喜不喜欢", pinyin: "xǐ bù xǐhuan", meaning: "suka atau tidak suka" },
+          { key: "c", text: "所以", pinyin: "suǒyǐ", meaning: "oleh karena itu" },
+          { key: "d", text: "想不想", pinyin: "xiǎng bù xiǎng", meaning: "ingin atau tidak ingin" }
+        ],
+        correct: ["b", "d"]
+      },
+
+      // === BAGIAN III: ISIAN MELENGKAPI KALIMAT DARI KOTAK (26 - 30) ===
+      {
+        id: 26,
+        section: "III. Isian Melengkapi Kalimat",
+        type: "fill_word",
+        illustration: "puzzle",
+        wordBank: [
+          { hanzi: "同学", pinyin: "tóngxué", meaning: "teman sekolah" },
+          { hanzi: "时候", pinyin: "shíhou", meaning: "saat / waktu" },
+          { hanzi: "一定", pinyin: "yīdìng", meaning: "pasti" },
+          { hanzi: "所以", pinyin: "suǒyǐ", meaning: "oleh karena itu" },
+          { hanzi: "应该", pinyin: "yīnggāi", meaning: "seharusnya" }
+        ],
+        sentenceBefore: "因为外面下雨了，",
+        sentenceAfter: " 我们不能去踢足球。",
+        qPinyin: "Yīnwèi wàimiàn xiàyǔ le, [ suǒyǐ ] wǒmen bù néng qù tī zúqiú.",
+        qMeaning: "Karena di luar turun hujan, [ oleh karena itu ] kita tidak bisa pergi bermain sepak bola.",
+        correct: "所以"
+      },
+      {
+        id: 27,
+        section: "III. Isian Melengkapi Kalimat",
+        type: "fill_word",
+        illustration: "puzzle",
+        wordBank: [
+          { hanzi: "同学", pinyin: "tóngxué", meaning: "teman sekolah" },
+          { hanzi: "时候", pinyin: "shíhou", meaning: "saat / waktu" },
+          { hanzi: "一定", pinyin: "yīdìng", meaning: "pasti" },
+          { hanzi: "所以", pinyin: "suǒyǐ", meaning: "oleh karena itu" },
+          { hanzi: "应该", pinyin: "yīnggāi", meaning: "seharusnya" }
+        ],
+        sentenceBefore: "每天早上七点，我和 ",
+        sentenceAfter: " 一起去学校。",
+        qPinyin: "Měitiān zǎoshang qī diǎn, wǒ hé [ tóngxué ] yīqǐ qù xuéxiào.",
+        qMeaning: "Setiap pagi pukul tujuh, aku dan [ teman sekolah ] bersama-sama pergi ke sekolah.",
+        correct: "同学"
+      },
+      {
+        id: 28,
+        section: "III. Isian Melengkapi Kalimat",
+        type: "fill_word",
+        illustration: "puzzle",
+        wordBank: [
+          { hanzi: "同学", pinyin: "tóngxué", meaning: "teman sekolah" },
+          { hanzi: "时候", pinyin: "shíhou", meaning: "saat / waktu" },
+          { hanzi: "一定", pinyin: "yīdìng", meaning: "pasti" },
+          { hanzi: "所以", pinyin: "suǒyǐ", meaning: "oleh karena itu" },
+          { hanzi: "应该", pinyin: "yīnggāi", meaning: "seharusnya" }
+        ],
+        sentenceBefore: "妈妈做饭的 ",
+        sentenceAfter: "，我在房间里看书。",
+        qPinyin: "Māma zuòfàn de [ shíhou ], wǒ zài fángjiān lǐ kàn shū.",
+        qMeaning: "Pada [ saat ] ibu memasak, aku membaca buku di dalam kamar.",
+        correct: "时候"
+      },
+      {
+        id: 29,
+        section: "III. Isian Melengkapi Kalimat",
+        type: "fill_word",
+        illustration: "puzzle",
+        wordBank: [
+          { hanzi: "同学", pinyin: "tóngxué", meaning: "teman sekolah" },
+          { hanzi: "时候", pinyin: "shíhou", meaning: "saat / waktu" },
+          { hanzi: "一定", pinyin: "yīdìng", meaning: "pasti" },
+          { hanzi: "所以", pinyin: "suǒyǐ", meaning: "oleh karena itu" },
+          { hanzi: "应该", pinyin: "yīnggāi", meaning: "seharusnya" }
+        ],
+        sentenceBefore: "奶奶生病了，我们 ",
+        sentenceAfter: " 去看她。",
+        qPinyin: "Nǎinai shēngbìng le, wǒmen [ yīnggāi ] qù kàn tā.",
+        qMeaning: "Nenek sedang sakit, kita [ seharusnya ] pergi menjenguknya.",
+        correct: "应该"
+      },
+      {
+        id: 30,
+        section: "III. Isian Melengkapi Kalimat",
+        type: "fill_word",
+        illustration: "puzzle",
+        wordBank: [
+          { hanzi: "同学", pinyin: "tóngxué", meaning: "teman sekolah" },
+          { hanzi: "时候", pinyin: "shíhou", meaning: "saat / waktu" },
+          { hanzi: "一定", pinyin: "yīdìng", meaning: "pasti" },
+          { hanzi: "所以", pinyin: "suǒyǐ", meaning: "oleh karena itu" },
+          { hanzi: "应该", pinyin: "yīnggāi", meaning: "seharusnya" }
+        ],
+        sentenceBefore: "明天是星期天，爸爸 ",
+        sentenceAfter: " 在家，不去上班。",
+        qPinyin: "Míngtiān shì Xīngqītiān, bàba [ yīdìng ] zài jiā, bù qù shàngbān.",
+        qMeaning: "Besok adalah hari Minggu, ayah [ pasti ] ada di rumah, tidak pergi bekerja.",
+        correct: "一定"
+      },
+
+      // === BAGIAN IV: PILIH HANZI SESUAI PINYIN (31 - 35) ===
+      {
+        id: 31,
+        section: "IV. Pilih Hanzi Sesuai Pinyin",
+        type: "pinyin_hanzi",
+        illustration: "puzzle",
+        targetPinyin: "kuài",
+        qMeaning: "Pilih huruf Hanzi yang dibaca 'kuài' (cepat):",
+        wordBank: [
+          { hanzi: "可以", meaning: "boleh / dapat" },
+          { hanzi: "慢", meaning: "lambat" },
+          { hanzi: "对", meaning: "benar" },
+          { hanzi: "快", meaning: "cepat" },
+          { hanzi: "最", meaning: "paling" }
+        ],
+        correct: "快"
+      },
+      {
+        id: 32,
+        section: "IV. Pilih Hanzi Sesuai Pinyin",
+        type: "pinyin_hanzi",
+        illustration: "puzzle",
+        targetPinyin: "zuì",
+        qMeaning: "Pilih huruf Hanzi yang dibaca 'zuì' (paling):",
+        wordBank: [
+          { hanzi: "可以", meaning: "boleh / dapat" },
+          { hanzi: "慢", meaning: "lambat" },
+          { hanzi: "对", meaning: "benar" },
+          { hanzi: "快", meaning: "cepat" },
+          { hanzi: "最", meaning: "paling" }
+        ],
+        correct: "最"
+      },
+      {
+        id: 33,
+        section: "IV. Pilih Hanzi Sesuai Pinyin",
+        type: "pinyin_hanzi",
+        illustration: "puzzle",
+        targetPinyin: "kě yǐ",
+        qMeaning: "Pilih huruf Hanzi yang dibaca 'kě yǐ' (boleh / dapat):",
+        wordBank: [
+          { hanzi: "可以", meaning: "boleh / dapat" },
+          { hanzi: "慢", meaning: "lambat" },
+          { hanzi: "对", meaning: "benar" },
+          { hanzi: "快", meaning: "cepat" },
+          { hanzi: "最", meaning: "paling" }
+        ],
+        correct: "可以"
+      },
+      {
+        id: 34,
+        section: "IV. Pilih Hanzi Sesuai Pinyin",
+        type: "pinyin_hanzi",
+        illustration: "puzzle",
+        targetPinyin: "màn",
+        qMeaning: "Pilih huruf Hanzi yang dibaca 'màn' (lambat):",
+        wordBank: [
+          { hanzi: "可以", meaning: "boleh / dapat" },
+          { hanzi: "慢", meaning: "lambat" },
+          { hanzi: "对", meaning: "benar" },
+          { hanzi: "快", meaning: "cepat" },
+          { hanzi: "最", meaning: "paling" }
+        ],
+        correct: "慢"
+      },
+      {
+        id: 35,
+        section: "IV. Pilih Hanzi Sesuai Pinyin",
+        type: "pinyin_hanzi",
+        illustration: "puzzle",
+        targetPinyin: "duì",
+        qMeaning: "Pilih huruf Hanzi yang dibaca 'duì' (benar):",
+        wordBank: [
+          { hanzi: "可以", meaning: "boleh / dapat" },
+          { hanzi: "慢", meaning: "lambat" },
+          { hanzi: "对", meaning: "benar" },
+          { hanzi: "快", meaning: "cepat" },
+          { hanzi: "最", meaning: "paling" }
+        ],
+        correct: "对"
+      },
+
+      // === BAGIAN V: URAIAN SUSUN KATA MENJADI KALIMAT / 连词成句 (36 - 40) ===
+      {
+        id: 36,
+        section: "V. Susun Kalimat (连词成句)",
+        type: "order",
+        illustration: "train",
+        instruction: "Susunlah potongan kata berikut menjadi kalimat yang benar!",
+        tiles: ["苹果", "三个", "妹妹", "有"],
+        tileHints: { "苹果": "píngguǒ (apel)", "三个": "sān gè (tiga buah)", "妹妹": "mèimei (adik pr)", "有": "yǒu (mempunyai)" },
+        endPunctuation: "。",
+        correctList: ["妹妹有三个苹果"],
+        displayAnswer: "妹妹有三个苹果。",
+        qPinyin: "Mèimei yǒu sān gè píngguǒ.",
+        qMeaning: "Adik perempuan mempunyai tiga buah apel."
+      },
+      {
+        id: 37,
+        section: "V. Susun Kalimat (连词成句)",
+        type: "order",
+        illustration: "train",
+        instruction: "Susunlah potongan kata berikut menjadi kalimat tanya yang benar!",
+        tiles: ["你", "吗", "游泳", "会"],
+        tileHints: { "你": "nǐ (kamu)", "吗": "ma (apakah)", "游泳": "yóuyǒng (berenang)", "会": "huì (bisa)" },
+        endPunctuation: "？",
+        correctList: ["你会游泳吗"],
+        displayAnswer: "你会游泳吗？",
+        qPinyin: "Nǐ huì yóuyǒng ma?",
+        qMeaning: "Apakah kamu bisa berenang?"
+      },
+      {
+        id: 38,
+        section: "V. Susun Kalimat (连词成句)",
+        type: "order",
+        illustration: "train",
+        instruction: "Susunlah potongan kata berikut menjadi kalimat sebab-akibat yang benar!",
+        tiles: ["因为", "生病了", "所以", "没去学校"],
+        tileHints: { "因为": "yīnwèi (karena)", "生病了": "shēngbìng le (sakit)", "所以": "suǒyǐ (jadi)", "没去学校": "méi qù xuéxiào (tidak pergi ke sekolah)" },
+        endPunctuation: "。",
+        correctList: ["因为生病了所以没去学校"],
+        displayAnswer: "因为生病了，所以没去学校。",
+        qPinyin: "Yīnwèi shēngbìng le, suǒyǐ méi qù xuéxiào.",
+        qMeaning: "Karena sakit, jadi tidak pergi ke sekolah."
+      },
+      {
+        id: 39,
+        section: "V. Susun Kalimat (连词成句)",
+        type: "order",
+        illustration: "train",
+        instruction: "Susunlah potongan kata berikut menjadi kalimat yang benar!",
+        tiles: ["每天", "妈妈", "坐汽车", "去上班"],
+        tileHints: { "每天": "měitiān (setiap hari)", "妈妈": "māma (ibu)", "坐汽车": "zuò qìchē (naik mobil)", "去上班": "qù shàngbān (pergi bekerja)" },
+        endPunctuation: "。",
+        correctList: ["妈妈每天坐汽车去上班", "每天妈妈坐汽车去上班"],
+        displayAnswer: "妈妈每天坐汽车去上班。",
+        qPinyin: "Māma měitiān zuò qìchē qù shàngbān.",
+        qMeaning: "Ibu setiap hari naik mobil pergi bekerja."
+      },
+      {
+        id: 40,
+        section: "V. Susun Kalimat (连词成句)",
+        type: "order",
+        illustration: "train",
+        instruction: "Susunlah potongan kata berikut menjadi kalimat yang benar!",
+        tiles: ["想", "坐飞机", "去北京", "哥哥"],
+        tileHints: { "想": "xiǎng (ingin)", "坐飞机": "zuò fēijī (naik pesawat)", "去北京": "qù Běijīng (pergi ke Beijing)", "哥哥": "gēge (kakak lk)" },
+        endPunctuation: "。",
+        correctList: ["哥哥想坐飞机去北京"],
+        displayAnswer: "哥哥想坐飞机去北京。",
+        qPinyin: "Gēge xiǎng zuò fēijī qù Běijīng.",
+        qMeaning: "Kakak laki-laki ingin naik pesawat pergi ke Beijing."
+      }
+    ];
+
+    /**
+     * Algoritma Fisher-Yates untuk mengacak array secara adil
+     */
+    function shuffleArray(array) {
+      const copy = [...array];
+      for (let i = copy.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [copy[i], copy[j]] = [copy[j], copy[i]];
+      }
+      return copy;
+    }
+
+    /**
+     * Mengacak pilihan jawaban di dalam setiap soal sekaligus mengacak urutan soal per bagian
+     */
+    function buildShuffledQuestions() {
+      const cloned = JSON.parse(JSON.stringify(BASE_QUESTIONS));
+
+      // 1. Acak pilihan jawaban / kotak kata / potongan kalimat untuk tiap soal
+      cloned.forEach(q => {
+        if (q.type === "single" || q.type === "multi2") {
+          const letters = ["a", "b", "c", "d"];
+          const correctTexts = Array.isArray(q.correct)
+            ? q.correct.map(k => q.options.find(o => o.key === k).text)
+            : [q.options.find(o => o.key === q.correct).text];
+
+          const shuffledOpts = shuffleArray(q.options).map((opt, idx) => ({
+            ...opt,
+            key: letters[idx]
+          }));
+
+          q.options = shuffledOpts;
+          if (q.type === "single") {
+            const found = shuffledOpts.find(o => correctTexts.includes(o.text));
+            q.correct = found ? found.key : "a";
+          } else {
+            q.correct = shuffledOpts
+              .filter(o => correctTexts.includes(o.text))
+              .map(o => o.key);
+          }
+        } else if (q.type === "fill_word" || q.type === "pinyin_hanzi") {
+          q.wordBank = shuffleArray(q.wordBank);
+        } else if (q.type === "order") {
+          let shuffledTiles = shuffleArray(q.tiles);
+          // Pastikan susunan awal tidak langsung membentuk jawaban benar
+          if (q.correctList.includes(shuffledTiles.join("")) && shuffledTiles.length > 1) {
+            shuffledTiles.push(shuffledTiles.shift());
+          }
+          q.tiles = shuffledTiles;
+        }
+      });
+
+      // 2. Acak urutan soal per bagian (Section I - V)
+      const sec1All = cloned.filter(q => q.section === "I. Pilihan Ganda");
+      const text1Group = shuffleArray(sec1All.filter(q => q.passageKey === "text1"));
+      const text2Group = shuffleArray(sec1All.filter(q => q.passageKey === "text2"));
+      const text3Group = shuffleArray(sec1All.filter(q => q.passageKey === "text3"));
+      const shuffledReadingBlocks = shuffleArray([text1Group, text2Group, text3Group]).flat();
+      const sec1Standalone = shuffleArray(sec1All.filter(q => !q.passageKey));
+
+      const sec2 = shuffleArray(cloned.filter(q => q.section === "II. PG Kompleks (2 Jawaban)"));
+      const sec3 = shuffleArray(cloned.filter(q => q.section === "III. Isian Melengkapi Kalimat"));
+      const sec4 = shuffleArray(cloned.filter(q => q.section === "IV. Pilih Hanzi Sesuai Pinyin"));
+      const sec5 = shuffleArray(cloned.filter(q => q.section === "V. Susun Kalimat (连词成句)"));
+
+      // 3. Gabungkan seluruh bagian dan beri nomor urut baru 1 - 40
+      const combined = [
+        ...shuffledReadingBlocks,
+        ...sec1Standalone,
+        ...sec2,
+        ...sec3,
+        ...sec4,
+        ...sec5
+      ];
+
+      return combined.map((q, idx) => ({
+        ...q,
+        id: idx + 1
+      }));
+    }
+
+    // ==================== STATE APLIKASI ====================
+    let QUESTIONS = buildShuffledQuestions();
+    let currentIndex = 0; // Indeks soal aktif (0 - 39)
+    let isReviewMode = false; // Apakah sedang di layar Review & Koreksi
+    let showPinyinHelper = false; // Bantuan baca Pinyin per soal (default false agar anak melatih membaca Hanzi)
+    let userAnswers = {}; // Menyimpan jawaban murid berdasarkan question.id
+
+    // ==================== FUNGSI BANTUAN & AUDIO ====================
+    function showToast(msg, icon = "💡") {
+      const toast = document.getElementById("toastBox");
+      document.getElementById("toastMsg").textContent = msg;
+      document.getElementById("toastIcon").textContent = icon;
+      toast.classList.remove("translate-y-20", "opacity-0");
+      toast.classList.add("translate-y-0", "opacity-100");
+      clearTimeout(window._toastTimer);
+      window._toastTimer = setTimeout(() => {
+        toast.classList.add("translate-y-20", "opacity-0");
+        toast.classList.remove("translate-y-0", "opacity-100");
+      }, 2600);
+    }
+
+    // Fitur pengucapan Mandarin (Web Speech API) untuk melatih membaca karakter
+    function speakMandarin(text) {
+      try {
+        if (!("speechSynthesis" in window)) {
+          showToast("Perangkat ini belum mendukung suara Mandarin otomatis.", "🔇");
+          return;
+        }
+        window.speechSynthesis.cancel();
+        const utterance = new SpeechSynthesisUtterance(text);
+        utterance.lang = "zh-CN";
+        utterance.rate = 0.85; // Sedikit lambat agar jelas untuk anak kelas 4 SD
+        window.speechSynthesis.speak(utterance);
+        showToast("Membacakan Hanzi dengan suara...", "🔊");
+      } catch (e) {
+        showToast("Suara tidak dapat diputar di browser ini.", "🔇");
+      }
+    }
+
+    function toggleMobileMenu() {
+      const sidebar = document.getElementById("leftSidebar");
+      const backdrop = document.getElementById("sidebarBackdrop");
+      const isClosed = sidebar.classList.contains("-translate-x-full");
+      if (isClosed) {
+        sidebar.classList.remove("-translate-x-full");
+        backdrop.classList.remove("hidden");
+      } else {
+        sidebar.classList.add("-translate-x-full");
+        backdrop.classList.add("hidden");
+      }
+    }
+
+    function closeMobileMenuIfOpen() {
+      const sidebar = document.getElementById("leftSidebar");
+      const backdrop = document.getElementById("sidebarBackdrop");
+      if (!sidebar.classList.contains("-translate-x-full")) {
+        sidebar.classList.add("-translate-x-full");
+        backdrop.classList.add("hidden");
+      }
+    }
+
+    // ==================== EVALUASI JAWABAN ====================
+    function isQuestionAnswered(q) {
+      const ans = userAnswers[q.id];
+      if (ans === undefined || ans === null) return false;
+      if (q.type === "multi2") return Array.isArray(ans) && ans.length === 2;
+      if (q.type === "order") return Array.isArray(ans) && ans.length === q.tiles.length;
+      return String(ans).trim().length > 0;
+    }
+
+    function isQuestionCorrect(q) {
+      const ans = userAnswers[q.id];
+      if (!isQuestionAnswered(q)) return false;
+
+      if (q.type === "single" || q.type === "fill_word" || q.type === "pinyin_hanzi") {
+        return ans === q.correct;
+      }
+      if (q.type === "multi2") {
+        const sortedUser = [...ans].sort().join(",");
+        const sortedCorrect = [...q.correct].sort().join(",");
+        return sortedUser === sortedCorrect;
+      }
+      if (q.type === "order") {
+        const joined = ans.join("");
+        return q.correctList.includes(joined);
+      }
+      return false;
+    }
+
+    function updateHeaderProgress() {
+      const answeredCount = QUESTIONS.filter(q => isQuestionAnswered(q)).length;
+      const pct = Math.round((answeredCount / QUESTIONS.length) * 100);
+      document.getElementById("headerProgressText").textContent = `${answeredCount} / ${QUESTIONS.length} Soal`;
+      document.getElementById("topProgressBar").style.width = `${pct}%`;
+    }
+
+    // ==================== RENDER MENU KIRI ====================
+    function renderLeftMenu() {
+      const container = document.getElementById("questionMenuContainer");
+      // Kelompokkan soal berdasarkan section
+      const groups = [];
+      QUESTIONS.forEach((q, idx) => {
+        let g = groups.find(item => item.section === q.section);
+        if (!g) {
+          g = { section: q.section, items: [] };
+          groups.push(g);
+        }
+        g.items.push({ q, idx });
+      });
+
+      container.innerHTML = groups.map(group => `
+        <div class="bg-amber-50/60 p-3 rounded-2xl border border-amber-200/80">
+          <div class="text-xs font-black text-amber-900 mb-2 tracking-wide">
+            ${group.section}
+          </div>
+          <div class="grid grid-cols-5 gap-2">
+            ${group.items.map(({ q, idx }) => {
+              const isCurrent = !isReviewMode && idx === currentIndex;
+              const answered = isQuestionAnswered(q);
+              let btnClass = "bg-white text-slate-700 border-2 border-slate-200 hover:border-amber-400";
+
+              if (isCurrent) {
+                btnClass = "bg-orange-500 text-white border-2 border-orange-700 ring-2 ring-amber-300 scale-105 shadow-md";
+              } else if (answered) {
+                btnClass = "bg-sky-500 text-white border-2 border-sky-600 shadow-xs";
+              }
+
+              return `
+                <button
+                  onclick="selectQuestion(${idx})"
+                  class="h-10 rounded-xl font-black text-sm transition-all active:scale-95 flex items-center justify-center cursor-pointer ${btnClass}"
+                  title="Soal No. ${q.id}"
+                >
+                  ${q.id}
+                </button>
+              `;
+            }).join("")}
+          </div>
+        </div>
+      `).join("");
+    }
+
+    // ==================== NAVIGASI SOAL (1 LAYAR 1 SOAL) ====================
+    function selectQuestion(idx) {
+      currentIndex = idx;
+      isReviewMode = false;
+      showPinyinHelper = false;
+      closeMobileMenuIfOpen();
+      renderAll();
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    }
+
+    function prevQuestion() {
+      if (currentIndex > 0) {
+        selectQuestion(currentIndex - 1);
+      }
+    }
+
+    function nextQuestion() {
+      if (currentIndex < QUESTIONS.length - 1) {
+        selectQuestion(currentIndex + 1);
+      } else {
+        openReviewView();
+      }
+    }
+
+    function togglePinyinHelper() {
+      showPinyinHelper = !showPinyinHelper;
+      renderSingleQuestion();
+    }
+
+    // ==================== HANDLER INTERAKSI JAWABAN ====================
+    function handleSingleSelect(qId, value) {
+      userAnswers[qId] = value;
+      renderAll();
+    }
+
+    function handleMulti2Toggle(qId, optionKey) {
+      let current = Array.isArray(userAnswers[qId]) ? [...userAnswers[qId]] : [];
+      if (current.includes(optionKey)) {
+        current = current.filter(k => k !== optionKey);
+      } else {
+        if (current.length >= 2) {
+          showToast("Maksimal pilih 2 jawaban ya! Hapus salah satu dulu jika ingin ganti.", "✌️");
+          return;
+        }
+        current.push(optionKey);
+      }
+      userAnswers[qId] = current;
+      renderAll();
+    }
+
+    function handleOrderAddTile(qId, tileIdx) {
+      const q = QUESTIONS.find(item => item.id === qId);
+      let selectedIndices = Array.isArray(userAnswers[qId + "_idx"]) ? [...userAnswers[qId + "_idx"]] : [];
+      if (!selectedIndices.includes(tileIdx)) {
+        selectedIndices.push(tileIdx);
+        userAnswers[qId + "_idx"] = selectedIndices;
+        userAnswers[qId] = selectedIndices.map(i => q.tiles[i]);
+        renderAll();
+      }
+    }
+
+    function handleOrderRemoveAt(qId, posIdx) {
+      const q = QUESTIONS.find(item => item.id === qId);
+      let selectedIndices = Array.isArray(userAnswers[qId + "_idx"]) ? [...userAnswers[qId + "_idx"]] : [];
+      selectedIndices.splice(posIdx, 1);
+      userAnswers[qId + "_idx"] = selectedIndices;
+      userAnswers[qId] = selectedIndices.map(i => q.tiles[i]);
+      renderAll();
+    }
+
+    function handleOrderReset(qId) {
+      userAnswers[qId + "_idx"] = [];
+      userAnswers[qId] = [];
+      renderAll();
+    }
+
+    // ==================== RENDER 1 LAYAR 1 SOAL ====================
+    function renderSingleQuestion() {
+      const stage = document.getElementById("singleQuestionStage");
+      const reviewStage = document.getElementById("reviewStage");
+      stage.classList.remove("hidden");
+      reviewStage.classList.add("hidden");
+
+      const q = QUESTIONS[currentIndex];
+      const passage = q.passageKey ? READING_PASSAGES[q.passageKey] : null;
+      const illusSvg = ILLUSTRATIONS[q.illustration] || ILLUSTRATIONS.puzzle;
+
+      // Bagian Teks Bacaan (Jika soal merupakan bagian dari bacaan 1-4, 5-7, 8-10)
+      let passageHtml = "";
+      if (passage) {
+        passageHtml = `
+          <div class="mb-5 bg-gradient-to-br from-sky-50 to-indigo-50 border-2 border-sky-200 rounded-3xl p-4 sm:p-5 shadow-xs">
+            <div class="flex flex-wrap items-center justify-between gap-2 mb-3">
+              <span class="px-3 py-1 rounded-full bg-sky-500 text-white text-xs font-extrabold">
+                📖 ${passage.title}
+              </span>
+              <button
+                onclick="speakMandarin('${passage.hanzi.replace(/'/g, "")}')"
+                class="px-3 py-1 rounded-full bg-white hover:bg-sky-100 text-sky-700 border border-sky-300 text-xs font-extrabold flex items-center gap-1 shadow-2xs cursor-pointer"
+              >
+                <span>🔊</span> Dengar Bacaan
+              </button>
+            </div>
+            <p class="font-fzkai text-2xl sm:text-3xl leading-relaxed text-slate-900 bg-white/90 p-4 rounded-2xl border border-sky-100">
+              ${passage.hanzi}
+            </p>
+            ${showPinyinHelper ? `
+              <div class="mt-3 p-3 rounded-2xl bg-amber-50 border border-amber-200 text-xs sm:text-sm space-y-1">
+                <p class="font-bold text-amber-900">Pinyin: <span class="font-normal">${passage.pinyin}</span></p>
+                <p class="font-bold text-emerald-800">Arti: <span class="font-normal">${passage.meaning}</span></p>
+              </div>
+            ` : ""}
+          </div>
+        `;
+      }
+
+      // Bagian Area Interaktif Berdasarkan Tipe Soal
+      let interactiveHtml = "";
+
+      if (q.type === "single") {
+        const chosen = userAnswers[q.id];
+        interactiveHtml = `
+          <div class="mb-5 flex flex-wrap items-center justify-between gap-3">
+            <h3 class="font-fzkai text-3xl sm:text-4xl font-bold text-slate-900 leading-snug">
+              ${q.question}
+            </h3>
+            <button
+              onclick="speakMandarin('${q.question.replace(/……/g, "什么")}')"
+              class="px-3.5 py-2 rounded-2xl bg-amber-100 hover:bg-amber-200 text-amber-900 font-extrabold text-xs flex items-center gap-1.5 border border-amber-300 cursor-pointer shrink-0"
+            >
+              <span>🔊</span> Baca Soal
+            </button>
+          </div>
+          ${showPinyinHelper ? `
+            <div class="mb-4 p-3 rounded-2xl bg-amber-50 border border-amber-200 text-xs sm:text-sm">
+              <div class="font-bold text-amber-900">Pinyin: <span class="font-normal">${q.qPinyin}</span></div>
+              <div class="font-bold text-emerald-800">Arti: <span class="font-normal">${q.qMeaning}</span></div>
+            </div>
+          ` : ""}
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
+            ${q.options.map(opt => {
+              const isSelected = chosen === opt.key;
+              return `
+                <button
+                  onclick="handleSingleSelect(${q.id}, '${opt.key}')"
+                  class="p-4 rounded-2xl border-3 text-left transition-all active:scale-[0.99] flex items-center gap-3.5 cursor-pointer ${
+                    isSelected
+                      ? "bg-orange-500 text-white border-orange-700 shadow-lg ring-4 ring-amber-200"
+                      : "bg-white hover:bg-amber-50 text-slate-800 border-slate-200 hover:border-amber-400 shadow-xs"
+                  }"
+                >
+                  <span class="w-10 h-10 rounded-xl font-black text-lg flex items-center justify-center shrink-0 uppercase ${
+                    isSelected ? "bg-white text-orange-600" : "bg-amber-100 text-amber-800"
+                  }">
+                    ${opt.key}
+                  </span>
+                  <div class="min-w-0">
+                    <div class="font-fzkai text-2xl sm:text-3xl font-bold leading-tight">${opt.text}</div>
+                    ${showPinyinHelper ? `
+                      <div class="text-xs mt-1 font-semibold ${isSelected ? "text-amber-100" : "text-slate-500"}">
+                        ${opt.pinyin} • ${opt.meaning}
+                      </div>
+                    ` : ""}
+                  </div>
+                </button>
+              `;
+            }).join("")}
+          </div>
+        `;
+      } else if (q.type === "multi2") {
+        const chosenList = Array.isArray(userAnswers[q.id]) ? userAnswers[q.id] : [];
+        interactiveHtml = `
+          <div class="mb-4 flex flex-wrap items-center justify-between gap-2">
+            <span class="px-3.5 py-1.5 rounded-full bg-purple-100 text-purple-800 border border-purple-300 text-xs sm:text-sm font-black">
+              ✌️ Pilih 2 Jawaban Tepat (${chosenList.length}/2 Terpilih)
+            </span>
+            <button
+              onclick="speakMandarin('${q.question.replace(/……/g, "").replace(/\(Pilih 2 jawaban tepat!\)/g, "")}')"
+              class="px-3.5 py-2 rounded-2xl bg-amber-100 hover:bg-amber-200 text-amber-900 font-extrabold text-xs flex items-center gap-1.5 border border-amber-300 cursor-pointer"
+            >
+              <span>🔊</span> Baca Soal
+            </button>
+          </div>
+          <h3 class="font-fzkai text-3xl sm:text-4xl font-bold text-slate-900 leading-snug mb-4">
+            ${q.question.replace("(Pilih 2 jawaban tepat!)", "")}
+          </h3>
+          ${showPinyinHelper ? `
+            <div class="mb-4 p-3 rounded-2xl bg-amber-50 border border-amber-200 text-xs sm:text-sm">
+              <div class="font-bold text-amber-900">Pinyin: <span class="font-normal">${q.qPinyin}</span></div>
+              <div class="font-bold text-emerald-800">Arti: <span class="font-normal">${q.qMeaning}</span></div>
+            </div>
+          ` : ""}
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
+            ${q.options.map(opt => {
+              const isSelected = chosenList.includes(opt.key);
+              return `
+                <button
+                  onclick="handleMulti2Toggle(${q.id}, '${opt.key}')"
+                  class="p-4 rounded-2xl border-3 text-left transition-all active:scale-[0.99] flex items-center gap-3.5 cursor-pointer ${
+                    isSelected
+                      ? "bg-purple-600 text-white border-purple-800 shadow-lg ring-4 ring-purple-200"
+                      : "bg-white hover:bg-purple-50 text-slate-800 border-slate-200 hover:border-purple-400 shadow-xs"
+                  }"
+                >
+                  <span class="w-10 h-10 rounded-xl font-black text-lg flex items-center justify-center shrink-0 uppercase ${
+                    isSelected ? "bg-white text-purple-700" : "bg-purple-100 text-purple-800"
+                  }">
+                    ${isSelected ? "✓" : opt.key}
+                  </span>
+                  <div>
+                    <div class="font-fzkai text-2xl sm:text-3xl font-bold leading-tight">${opt.text}</div>
+                    ${showPinyinHelper ? `
+                      <div class="text-xs mt-1 font-semibold ${isSelected ? "text-purple-100" : "text-slate-500"}">
+                        ${opt.pinyin} • ${opt.meaning}
+                      </div>
+                    ` : ""}
+                  </div>
+                </button>
+              `;
+            }).join("")}
+          </div>
+        `;
+      } else if (q.type === "fill_word") {
+        const chosen = userAnswers[q.id] || "";
+        interactiveHtml = `
+          <div class="mb-3 flex flex-wrap items-center justify-between gap-2">
+            <span class="px-3.5 py-1 rounded-full bg-teal-100 text-teal-800 border border-teal-300 text-xs font-black">
+              🧩 Klik salah satu kata Hanzi di kotak untuk mengisi bagian kosong!
+            </span>
+            <button
+              onclick="speakMandarin('${q.sentenceBefore}${chosen || "什么"}${q.sentenceAfter}')"
+              class="px-3.5 py-2 rounded-2xl bg-amber-100 hover:bg-amber-200 text-amber-900 font-extrabold text-xs flex items-center gap-1.5 border border-amber-300 cursor-pointer"
+            >
+              <span>🔊</span> Baca Kalimat
+            </button>
+          </div>
+
+          <!-- Kotak Pilihan Kata Hanzi -->
+          <div class="p-4 rounded-2xl bg-teal-50/80 border-2 border-teal-200 mb-5">
+            <div class="text-xs font-extrabold text-teal-800 mb-2.5 uppercase tracking-wider">Kotak Pilihan Kata:</div>
+            <div class="flex flex-wrap gap-2.5 sm:gap-3">
+              ${q.wordBank.map(w => {
+                const isSelected = chosen === w.hanzi;
+                return `
+                  <button
+                    onclick="handleSingleSelect(${q.id}, '${w.hanzi}')"
+                    class="px-4 py-2.5 rounded-2xl border-2 transition-all active:scale-95 cursor-pointer ${
+                      isSelected
+                        ? "bg-teal-600 text-white border-teal-800 shadow-md scale-105"
+                        : "bg-white hover:bg-teal-100 text-slate-900 border-teal-300"
+                    }"
+                  >
+                    <span class="font-fzkai text-2xl sm:text-3xl font-bold block">${w.hanzi}</span>
+                    ${showPinyinHelper ? `<span class="text-[11px] block opacity-85">${w.pinyin} (${w.meaning})</span>` : ""}
+                  </button>
+                `;
+              }).join("")}
+            </div>
+          </div>
+
+          <!-- Kalimat Rumpang -->
+          <div class="p-5 rounded-3xl bg-white border-2 border-amber-200 shadow-xs font-fzkai text-3xl sm:text-4xl leading-relaxed text-slate-900">
+            <span>${q.sentenceBefore}</span>
+            <span class="inline-flex items-center justify-center min-w-[96px] px-4 py-1 mx-1 rounded-2xl border-b-4 ${
+              chosen
+                ? "bg-teal-100 text-teal-900 border-teal-500 font-bold"
+                : "bg-amber-50 text-amber-400 border-dashed border-amber-400"
+            }">
+              ${chosen || "（ ？ ）"}
+            </span>
+            <span>${q.sentenceAfter}</span>
+          </div>
+
+          ${showPinyinHelper ? `
+            <div class="mt-4 p-3 rounded-2xl bg-amber-50 border border-amber-200 text-xs sm:text-sm">
+              <div class="font-bold text-amber-900">Pinyin: <span class="font-normal">${q.qPinyin}</span></div>
+              <div class="font-bold text-emerald-800">Arti: <span class="font-normal">${q.qMeaning}</span></div>
+            </div>
+          ` : ""}
+        `;
+      } else if (q.type === "pinyin_hanzi") {
+        const chosen = userAnswers[q.id] || "";
+        interactiveHtml = `
+          <div class="mb-4 text-center sm:text-left">
+            <span class="px-3.5 py-1 rounded-full bg-indigo-100 text-indigo-800 border border-indigo-300 text-xs font-black">
+              🔤 Cocokkan Pinyin dengan Karakter Hanzi yang Benar!
+            </span>
+          </div>
+
+          <div class="flex flex-col sm:flex-row items-center justify-between gap-4 p-5 rounded-3xl bg-gradient-to-r from-indigo-50 to-purple-50 border-2 border-indigo-200 mb-6">
+            <div>
+              <div class="text-xs font-bold text-indigo-600 uppercase">Pinyin Soal No. ${q.id}:</div>
+              <div class="text-4xl sm:text-5xl font-black text-indigo-900 tracking-wide mt-1">
+                ${q.targetPinyin}
+              </div>
+              ${showPinyinHelper ? `<div class="text-sm text-emerald-700 font-bold mt-1">${q.qMeaning}</div>` : ""}
+            </div>
+
+            <div class="flex items-center gap-3">
+              <button
+                onclick="speakMandarin('${q.correct}')"
+                class="px-4 py-2.5 rounded-2xl bg-white hover:bg-indigo-100 text-indigo-800 font-extrabold text-xs border border-indigo-300 shadow-2xs flex items-center gap-1.5 cursor-pointer"
+              >
+                <span>🔊</span> Dengar Bunyi
+              </button>
+              <div class="w-20 h-20 rounded-2xl bg-white border-3 border-dashed border-indigo-400 flex items-center justify-center font-fzkai text-4xl font-bold text-indigo-700 shadow-inner">
+                ${chosen || "?"}
+              </div>
+            </div>
+          </div>
+
+          <div class="text-xs font-extrabold text-slate-600 mb-2.5">Klik karakter Hanzi yang sesuai:</div>
+          <div class="grid grid-cols-2 sm:grid-cols-5 gap-3">
+            ${q.wordBank.map(w => {
+              const isSelected = chosen === w.hanzi;
+              return `
+                <button
+                  onclick="handleSingleSelect(${q.id}, '${w.hanzi}')"
+                  class="p-4 rounded-2xl border-3 transition-all active:scale-95 flex flex-col items-center justify-center cursor-pointer ${
+                    isSelected
+                      ? "bg-indigo-600 text-white border-indigo-800 shadow-lg scale-105"
+                      : "bg-white hover:bg-indigo-50 text-slate-900 border-slate-200 hover:border-indigo-400"
+                  }"
+                >
+                  <span class="font-fzkai text-3xl sm:text-4xl font-bold">${w.hanzi}</span>
+                  ${showPinyinHelper ? `<span class="text-[11px] mt-1 font-bold opacity-85">${w.meaning}</span>` : ""}
+                </button>
+              `;
+            }).join("")}
+          </div>
+        `;
+      } else if (q.type === "order") {
+        const selectedIndices = Array.isArray(userAnswers[q.id + "_idx"]) ? userAnswers[q.id + "_idx"] : [];
+        const builtWords = selectedIndices.map(i => q.tiles[i]);
+
+        interactiveHtml = `
+          <div class="mb-3 flex flex-wrap items-center justify-between gap-2">
+            <span class="px-3.5 py-1 rounded-full bg-rose-100 text-rose-800 border border-rose-300 text-xs font-black">
+              🚂 ${q.instruction}
+            </span>
+            <div class="flex items-center gap-2">
+              <button
+                onclick="handleOrderReset(${q.id})"
+                class="px-3 py-1.5 rounded-xl bg-slate-200 hover:bg-slate-300 text-slate-800 font-extrabold text-xs cursor-pointer"
+              >
+                🔄 Ulangi Susunan
+              </button>
+              ${builtWords.length > 0 ? `
+                <button
+                  onclick="speakMandarin('${builtWords.join("")}')"
+                  class="px-3 py-1.5 rounded-xl bg-amber-100 hover:bg-amber-200 text-amber-900 font-extrabold text-xs border border-amber-300 cursor-pointer"
+                >
+                  🔊 Baca Susunanku
+                </button>
+              ` : ""}
+            </div>
+          </div>
+
+          <!-- Area Hasil Susunan Kalimat Anak -->
+          <div class="p-4 sm:p-5 rounded-3xl bg-rose-50/70 border-2 border-dashed border-rose-300 min-h-[96px] flex flex-wrap items-center gap-2.5 mb-5">
+            ${
+              builtWords.length === 0
+                ? `<span class="text-rose-400 font-bold text-sm sm:text-base">Klik balok kata Hanzi di bawah ini secara berurutan...</span>`
+                : builtWords.map((word, posIdx) => `
+                    <button
+                      onclick="handleOrderRemoveAt(${q.id}, ${posIdx})"
+                      class="px-4 py-2.5 rounded-2xl bg-rose-500 hover:bg-rose-600 text-white font-fzkai text-2xl sm:text-3xl font-bold shadow-md border-b-4 border-rose-700 active:scale-95 transition flex items-center gap-1.5 cursor-pointer"
+                      title="Klik untuk membatalkan kata ini"
+                    >
+                      <span>${word}</span>
+                      <span class="text-xs bg-white/25 rounded-full px-1.5 py-0.5 font-sans">✕</span>
+                    </button>
+                  `).join("") + `<span class="font-fzkai text-3xl font-bold text-rose-700 ml-1">${q.endPunctuation}</span>`
+            }
+          </div>
+
+          <!-- Balok Kata Acak yang Bisa Diklik -->
+          <div class="text-xs font-extrabold text-slate-600 mb-2">Pilihan Potongan Kata:</div>
+          <div class="flex flex-wrap gap-3">
+            ${q.tiles.map((tile, tileIdx) => {
+              const isUsed = selectedIndices.includes(tileIdx);
+              return `
+                <button
+                  onclick="handleOrderAddTile(${q.id}, ${tileIdx})"
+                  ${isUsed ? "disabled" : ""}
+                  class="px-5 py-3 rounded-2xl border-2 transition-all ${
+                    isUsed
+                      ? "bg-slate-100 text-slate-300 border-slate-200 cursor-not-allowed scale-95"
+                      : "bg-white hover:bg-amber-50 text-slate-900 border-amber-300 hover:border-amber-500 shadow-sm active:scale-95 cursor-pointer"
+                  }"
+                >
+                  <span class="font-fzkai text-2xl sm:text-3xl font-bold block">${tile}</span>
+                  ${showPinyinHelper ? `<span class="text-[11px] font-sans text-slate-500 block mt-0.5">${q.tileHints[tile]}</span>` : ""}
+                </button>
+              `;
+            }).join("")}
+          </div>
+
+          ${showPinyinHelper ? `
+            <div class="mt-4 p-3 rounded-2xl bg-amber-50 border border-amber-200 text-xs sm:text-sm">
+              <div class="font-bold text-emerald-800">Petunjuk Arti Kalimat: <span class="font-normal">${q.qMeaning}</span></div>
+            </div>
+          ` : ""}
+        `;
+      }
+
+      // Gabungkan Semua ke dalam Kartu 1 Layar 1 Soal
+      stage.innerHTML = `
+        <div class="bg-white rounded-3xl shadow-xl border-4 border-amber-200 p-4 sm:p-7 animate-pop flex-1 flex flex-col justify-between">
+          <div>
+            <!-- Bar Atas Kartu Soal -->
+            <div class="flex flex-wrap items-center justify-between gap-2 pb-4 mb-5 border-b-2 border-amber-100">
+              <div class="flex items-center gap-2.5">
+                <span class="px-4 py-1.5 rounded-2xl bg-gradient-to-r from-amber-500 to-orange-500 text-white font-black text-sm sm:text-base shadow-xs">
+                  Soal No. ${q.id} / ${QUESTIONS.length}
+                </span>
+                <span class="text-xs sm:text-sm font-extrabold text-amber-800 bg-amber-100 px-3 py-1.5 rounded-xl">
+                  ${q.section}
+                </span>
+              </div>
+
+              <!-- Tombol Intip Pinyin & Arti (Membantu anak belajar membaca Hanzi) -->
+              <button
+                onclick="togglePinyinHelper()"
+                class="px-3.5 py-2 rounded-2xl font-extrabold text-xs sm:text-sm transition flex items-center gap-1.5 border-2 cursor-pointer ${
+                  showPinyinHelper
+                    ? "bg-amber-400 text-amber-950 border-amber-600 shadow-xs"
+                    : "bg-slate-100 hover:bg-amber-100 text-slate-700 border-slate-200"
+                }"
+              >
+                <span>${showPinyinHelper ? "🙈 Sembunyikan Pinyin" : "👀 Bantuan Pinyin & Arti"}</span>
+              </button>
+            </div>
+
+            <!-- Gambar Lucu & Menarik untuk Anak Kelas 4 SD -->
+            <div class="mb-5 bg-gradient-to-b from-amber-50/90 to-white rounded-3xl p-3 border border-amber-100 flex flex-col sm:flex-row items-center gap-4">
+              <div class="shrink-0">
+                ${illusSvg}
+              </div>
+              <div class="text-center sm:text-left">
+                <span class="inline-block px-2.5 py-0.5 rounded-full bg-orange-100 text-orange-700 text-[11px] font-black mb-1">
+                  ✨ Tips Membaca Hanzi (Font FZKai)
+                </span>
+                <p class="text-xs sm:text-sm text-slate-600 font-semibold leading-relaxed">
+                  Perhatikan bentuk karakter <span class="font-fzkai text-base font-bold text-slate-900">汉字</span> dengan teliti! Coba baca sendiri terlebih dahulu sebelum menekan tombol <em>Bantuan Pinyin & Arti</em>.
+                </p>
+              </div>
+            </div>
+
+            <!-- Bacaan (Jika Ada) -->
+            ${passageHtml}
+
+            <!-- Konten Soal Interaktif -->
+            <div>
+              ${interactiveHtml}
+            </div>
+          </div>
+
+          <!-- Navigasi Bawah: Soal Sebelumnya & Soal Berikutnya -->
+          <div class="mt-8 pt-4 border-t-2 border-amber-100 flex items-center justify-between gap-3">
+            <button
+              onclick="prevQuestion()"
+              ${currentIndex === 0 ? "disabled" : ""}
+              class="px-4 sm:px-6 py-3 rounded-2xl font-black text-sm sm:text-base transition flex items-center gap-2 ${
+                currentIndex === 0
+                  ? "bg-slate-100 text-slate-400 cursor-not-allowed"
+                  : "bg-amber-100 hover:bg-amber-200 text-amber-900 border-b-4 border-amber-300 active:translate-y-0.5 cursor-pointer"
+              }"
+            >
+              <span>⬅</span>
+              <span>Sebelumnya</span>
+            </button>
+
+            <span class="text-xs sm:text-sm font-extrabold text-slate-400 hidden sm:inline">
+              1 Layar 1 Soal • Nomor ${q.id}
+            </span>
+
+            ${
+              currentIndex === QUESTIONS.length - 1
+                ? `
+                  <button
+                    onclick="openReviewView()"
+                    class="px-5 sm:px-7 py-3 rounded-2xl bg-gradient-to-r from-emerald-500 to-teal-500 hover:from-emerald-600 hover:to-teal-600 text-white font-black text-sm sm:text-base shadow-md border-b-4 border-emerald-700 active:translate-y-0.5 transition flex items-center gap-2 cursor-pointer"
+                  >
+                    <span>Selesai & Review</span>
+                    <span>🎉</span>
+                  </button>
+                `
+                : `
+                  <button
+                    onclick="nextQuestion()"
+                    class="px-5 sm:px-7 py-3 rounded-2xl bg-gradient-to-r from-orange-500 to-amber-500 hover:from-orange-600 hover:to-amber-600 text-white font-black text-sm sm:text-base shadow-md border-b-4 border-orange-700 active:translate-y-0.5 transition flex items-center gap-2 cursor-pointer"
+                  >
+                    <span>Berikutnya</span>
+                    <span>➡</span>
+                  </button>
+                `
+            }
+          </div>
+        </div>
+      `;
+    }
+
+    // ==================== RENDER HALAMAN REVIEW & KOREKSI ====================
+    function openReviewView() {
+      isReviewMode = true;
+      closeMobileMenuIfOpen();
+      renderLeftMenu();
+
+      const stage = document.getElementById("singleQuestionStage");
+      const reviewStage = document.getElementById("reviewStage");
+      stage.classList.add("hidden");
+      reviewStage.classList.remove("hidden");
+
+      let correctCount = 0;
+      let answeredCount = 0;
+
+      QUESTIONS.forEach(q => {
+        if (isQuestionAnswered(q)) answeredCount++;
+        if (isQuestionCorrect(q)) correctCount++;
+      });
+
+      const score = Math.round((correctCount / QUESTIONS.length) * 100);
+      let praiseTitle = "Terus Semangat Belajar Hanzi! 💪";
+      let praiseSub = "Ayo periksa jawaban yang masih salah di bawah ini agar makin mahir membaca!";
+      if (score >= 90) {
+        praiseTitle = "Luar Biasa Hebat! 你真棒！🏆";
+        praiseSub = "Kamu sudah sangat mahir membaca dan memahami karakter Hanzi kelas 4 SD!";
+      } else if (score >= 75) {
+        praiseTitle = "Bagus Sekali! 很好！🌟";
+        praiseSub = "Sebagian besar karakter Hanzi sudah kamu pahami dengan baik. Cek koreksi di bawah ya!";
+      }
+
+      const cardsHtml = QUESTIONS.map((q, idx) => {
+        const answered = isQuestionAnswered(q);
+        const correct = isQuestionCorrect(q);
+
+        // Format Tampilan Jawaban Murid & Jawaban Benar
+        let userAnsDisplay = "<span class='italic text-slate-400'>Belum dijawab</span>";
+        let correctAnsDisplay = "";
+        let questionTextDisplay = "";
+
+        if (q.type === "single") {
+          questionTextDisplay = q.question;
+          const uKey = userAnswers[q.id];
+          if (uKey) {
+            const uOpt = q.options.find(o => o.key === uKey);
+            userAnsDisplay = `<span class="uppercase font-sans font-black mr-1">${uKey}.</span> <span class="font-fzkai text-2xl">${uOpt.text}</span> <span class="text-xs text-slate-500">(${uOpt.pinyin} - ${uOpt.meaning})</span>`;
+          }
+          const cOpt = q.options.find(o => o.key === q.correct);
+          correctAnsDisplay = `<span class="uppercase font-sans font-black mr-1">${cOpt.key}.</span> <span class="font-fzkai text-2xl">${cOpt.text}</span> <span class="text-xs text-emerald-700">(${cOpt.pinyin} - ${cOpt.meaning})</span>`;
+        } else if (q.type === "multi2") {
+          questionTextDisplay = q.question.replace("(Pilih 2 jawaban tepat!)", "");
+          const uKeys = Array.isArray(userAnswers[q.id]) ? userAnswers[q.id] : [];
+          if (uKeys.length > 0) {
+            userAnsDisplay = uKeys.map(k => {
+              const o = q.options.find(item => item.key === k);
+              return `<span class="inline-block mr-2"><b class="uppercase font-sans">${k}.</b> <span class="font-fzkai text-xl">${o.text}</span></span>`;
+            }).join(", ");
+          }
+          correctAnsDisplay = q.correct.map(k => {
+            const o = q.options.find(item => item.key === k);
+            return `<span class="inline-block mr-3"><b class="uppercase font-sans">${k}.</b> <span class="font-fzkai text-xl">${o.text}</span> <span class="text-xs">(${o.pinyin})</span></span>`;
+          }).join(" & ");
+        } else if (q.type === "fill_word") {
+          questionTextDisplay = `${q.sentenceBefore}【 ____ 】${q.sentenceAfter}`;
+          if (userAnswers[q.id]) {
+            userAnsDisplay = `<span class="font-fzkai text-2xl font-bold">${userAnswers[q.id]}</span>`;
+          }
+          const wb = q.wordBank.find(w => w.hanzi === q.correct);
+          correctAnsDisplay = `<span class="font-fzkai text-2xl font-bold">${q.correct}</span> <span class="text-xs text-emerald-700">(${wb ? wb.pinyin + " - " + wb.meaning : ""})</span>`;
+        } else if (q.type === "pinyin_hanzi") {
+          questionTextDisplay = `Pinyin: <span class="font-sans font-black text-indigo-700">${q.targetPinyin}</span>`;
+          if (userAnswers[q.id]) {
+            userAnsDisplay = `<span class="font-fzkai text-2xl font-bold">${userAnswers[q.id]}</span>`;
+          }
+          const wb = q.wordBank.find(w => w.hanzi === q.correct);
+          correctAnsDisplay = `<span class="font-fzkai text-2xl font-bold">${q.correct}</span> <span class="text-xs text-emerald-700">(${wb ? wb.meaning : ""})</span>`;
+        } else if (q.type === "order") {
+          questionTextDisplay = `Susun kata: <span class="font-fzkai text-xl">${q.tiles.join(" / ")}</span>`;
+          if (answered) {
+            userAnsDisplay = `<span class="font-fzkai text-2xl font-bold">${userAnswers[q.id].join("")}${q.endPunctuation}</span>`;
+          }
+          correctAnsDisplay = `<span class="font-fzkai text-2xl font-bold">${q.displayAnswer}</span> <span class="text-xs text-emerald-700">(${q.qPinyin})</span>`;
+        }
+
+        const cardBorder = !answered
+          ? "border-slate-200 bg-white"
+          : correct
+            ? "border-emerald-300 bg-emerald-50/40"
+            : "border-rose-300 bg-rose-50/40";
+
+        const statusBadge = !answered
+          ? `<span class="px-3 py-1 rounded-full bg-slate-200 text-slate-700 text-xs font-black">⚪ Kosong</span>`
+          : correct
+            ? `<span class="px-3 py-1 rounded-full bg-emerald-500 text-white text-xs font-black">✅ Benar</span>`
+            : `<span class="px-3 py-1 rounded-full bg-rose-500 text-white text-xs font-black">❌ Perlu Koreksi</span>`;
+
+        return `
+          <div class="p-4 sm:p-5 rounded-3xl border-2 ${cardBorder} shadow-xs">
+            <div class="flex flex-wrap items-center justify-between gap-2 mb-2">
+              <div class="flex items-center gap-2">
+                <span class="w-8 h-8 rounded-xl bg-amber-500 text-white font-black text-sm flex items-center justify-center">
+                  ${q.id}
+                </span>
+                <span class="text-xs font-extrabold text-slate-500">${q.section}</span>
+                ${statusBadge}
+              </div>
+
+              <button
+                onclick="selectQuestion(${idx})"
+                class="px-3 py-1.5 rounded-xl bg-amber-100 hover:bg-amber-200 text-amber-900 font-extrabold text-xs cursor-pointer"
+              >
+                ✏️ Buka Soal No. ${q.id}
+              </button>
+            </div>
+
+            <!-- Pertanyaan dalam Font FZKai -->
+            <div class="font-fzkai text-2xl sm:text-3xl font-bold text-slate-900 my-2">
+              ${questionTextDisplay}
+            </div>
+            <div class="text-xs text-slate-500 mb-3">
+              ${q.qPinyin ? `<span class="font-bold text-amber-800">${q.qPinyin}</span> • ` : ""}${q.qMeaning || ""}
+            </div>
+
+            <!-- Kotak Perbandingan Jawaban Murid vs Jawaban Benar -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-3 text-sm">
+              <div class="p-3 rounded-2xl bg-white border ${correct ? "border-emerald-200" : "border-rose-200"}">
+                <div class="text-xs font-extrabold text-slate-500 mb-1">Jawaban Kamu:</div>
+                <div class="${correct ? "text-emerald-800" : "text-rose-700"} font-bold">
+                  ${userAnsDisplay}
+                </div>
+              </div>
+
+              <div class="p-3 rounded-2xl bg-emerald-50 border border-emerald-300">
+                <div class="text-xs font-extrabold text-emerald-800 mb-1">✅ Jawaban Benar (Koreksi):</div>
+                <div class="text-emerald-950 font-bold">
+                  ${correctAnsDisplay}
+                </div>
+              </div>
+            </div>
+          </div>
+        `;
+      }).join("");
+
+      reviewStage.innerHTML = `
+        <div class="bg-white rounded-3xl shadow-xl border-4 border-emerald-200 p-4 sm:p-7 animate-pop space-y-6">
+          <!-- Ringkasan Skor Anak -->
+          <div class="bg-gradient-to-r from-emerald-500 via-teal-500 to-sky-500 text-white rounded-3xl p-5 sm:p-7 shadow-md flex flex-col sm:flex-row items-center justify-between gap-5">
+            <div>
+              <span class="inline-block px-3 py-1 rounded-full bg-white/20 text-xs font-black mb-2">
+                📊 Hasil Review & Koreksi Belajar Hanzi
+              </span>
+              <h2 class="text-2xl sm:text-3xl font-black">${praiseTitle}</h2>
+              <p class="text-sm text-emerald-50 font-semibold mt-1">${praiseSub}</p>
+              <div class="mt-4 flex flex-wrap gap-2">
+                <button
+                  onclick="selectQuestion(0)"
+                  class="px-4 py-2 rounded-2xl bg-white text-teal-800 hover:bg-amber-50 font-black text-xs sm:text-sm shadow-xs cursor-pointer"
+                >
+                  ⬅ Kembali ke Soal No. 1
+                </button>
+                <button
+                  onclick="resetAllAnswers()"
+                  class="px-4 py-2 rounded-2xl bg-rose-500 hover:bg-rose-600 text-white font-black text-xs sm:text-sm shadow-xs cursor-pointer"
+                >
+                  🔄 Ulangi Latihan dari Awal
+                </button>
+              </div>
+            </div>
+
+            <div class="bg-white text-slate-900 rounded-3xl p-5 text-center min-w-[160px] shadow-lg border-4 border-amber-300 shrink-0">
+              <div class="text-xs font-extrabold text-slate-500 uppercase">Nilai Akhir</div>
+              <div class="text-5xl font-black text-emerald-600 my-1">${score}</div>
+              <div class="text-xs font-extrabold text-slate-700">
+                Benar <span class="text-emerald-600">${correctCount}</span> dari ${QUESTIONS.length} Soal
+              </div>
+            </div>
+          </div>
+
+          <!-- Daftar Seluruh 40 Soal + Jawaban Benar -->
+          <div>
+            <h3 class="text-lg sm:text-xl font-black text-slate-800 mb-3 flex items-center gap-2">
+              <span>📝</span> Pembahasan Seluruh Soal & Kunci Jawaban (Font FZKai)
+            </h3>
+            <div class="space-y-4">
+              ${cardsHtml}
+            </div>
+          </div>
+        </div>
+      `;
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    }
+
+    function resetAllAnswers() {
+      QUESTIONS = buildShuffledQuestions();
+      userAnswers = {};
+      currentIndex = 0;
+      isReviewMode = false;
+      showPinyinHelper = false;
+      renderAll();
+      showToast("Soal & jawaban telah diacak ulang. Selamat berlatih!", "🔀");
+    }
+
+    function renderAll() {
+      updateHeaderProgress();
+      renderLeftMenu();
+      if (isReviewMode) {
+        openReviewView();
+      } else {
+        renderSingleQuestion();
+      }
+    }
+
+    // Inisialisasi aplikasi saat halaman selesai dimuat
+    window.addEventListener("DOMContentLoaded", () => {
+      renderAll();
+    });
+  </script>
+</body>
+</html>
